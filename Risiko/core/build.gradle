@@ -1,0 +1,20 @@
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+eclipse.project.name = appName + '-core'
+
+dependencies {
+  api "com.badlogicgames.gdx:gdx:$gdxVersion"
+  api "com.github.raeleus.stripe:stripe:$stripeVersion"
+  api "com.github.tommyettinger:anim8-gdx:$anim8Version"
+  api "com.github.tommyettinger:digital:$digitalVersion"
+  api "de.tomgrill.gdxdialogs:gdx-dialogs-core:$dialogsVersion"
+  
+  // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core
+  //implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.18.3'
+  // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
+  //implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.18.3'
+  
+
+  if(enableGraalNative == 'true') {
+    implementation "io.github.berstanio:gdx-svmhelper-annotations:$graalHelperVersion"
+  }
+}
