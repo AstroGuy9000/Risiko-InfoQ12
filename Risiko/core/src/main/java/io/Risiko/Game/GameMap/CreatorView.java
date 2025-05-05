@@ -317,6 +317,9 @@ public class CreatorView {
 			
 			System.out.println("resume: escMenu --> goto game");
 			
+			setViewPoly(true);
+			setViewOutline(true);
+			
 			controller.resumeInput();
 		}
 		else {
@@ -554,6 +557,9 @@ public class CreatorView {
 		private ContinentMaker(Skin skin) {
 			super("Kontinent", skin);
 			
+			setViewPoly(false);
+			setViewOutline(false);
+			
 			setMovable(false);
 			setResizable(false);
 			setFillParent(false);
@@ -600,6 +606,11 @@ public class CreatorView {
 				
 				@Override
 				public void acceptPressed() {
+					stageUI.unfocusAll();
+				}
+				
+				@Override
+				public void backPressed() {
 					stageUI.unfocusAll();
 				}
 			};
@@ -671,6 +682,8 @@ public class CreatorView {
 		
 		private void updateList() {
 			
+			String selected = selectCont.getSelected();
+			
 			Object[] objArr = model.getContinents().keySet().toArray();
 			String[] contsNameArr = new String[model.getContinents().size()];
 			
@@ -684,8 +697,11 @@ public class CreatorView {
 			selectCont.setItems(contsNameArr);
 			System.out.println(selectCont.getItems().size);
 			
-			if(selectCont.getSelected() != null) {
+			if(selectCont.getItems().contains(selected, false)) {
+				selectCont.setSelected(selected);
 				setCurrCont(model.getContinents().get(selectCont.getSelected()));
+			} else {
+				newCurrCont();
 			}
 		}
 		
@@ -712,9 +728,12 @@ public class CreatorView {
 		}
 		
 		private void updateRGBsliders() {
-			red.setValue(tempColor.r*255);
-			green.setValue(tempColor.g*255);
-			blue.setValue(tempColor.b*255);
+			
+			Color storeColor = new Color(tempColor);
+			
+			red.setValue(storeColor.r*255);
+			green.setValue(storeColor.g*255);
+			blue.setValue(storeColor.b*255);
 			
 			updateRGBdisplay();
 		}
@@ -755,10 +774,10 @@ public class CreatorView {
 			
 			currCont = cont;
 			
-			tempName = cont.getName();
+			tempName = new String(cont.getName());
 			name.setText(tempName);
 			tempBonus = cont.getBonus();
-			tempColor = cont.getColor();
+			tempColor = new Color(cont.getColor());
 			
 			updateName();
 			updateBonus();
@@ -778,7 +797,6 @@ public class CreatorView {
 				tempContArr.remove(currCont.getName(), currCont);
 				
 				if(dupeName(tempContArr, tempName)) {
-					updateList();
 					return false;
 				}
 				
@@ -794,7 +812,6 @@ public class CreatorView {
 			}
 			
 			if(dupeName(model.getContinents(), tempName)) {
-				updateList();
 				return false;
 			}	
 			
