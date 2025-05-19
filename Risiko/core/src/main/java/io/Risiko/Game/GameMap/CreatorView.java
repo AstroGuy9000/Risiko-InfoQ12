@@ -266,7 +266,7 @@ public class CreatorView {
 				drawElementPoly(i, Color.RED);
 			}
 			
-			for(Country i: controller.getSelection()) {
+			for(Country i: model.getSelection()) {
 				drawElementPoly(i, Color.YELLOW);
 			}
 		}
@@ -276,7 +276,7 @@ public class CreatorView {
 				drawElementOutline(i, Color.FIREBRICK);
 			}
 			
-			for(Country i: controller.getSelection()) {
+			for(Country i: model.getSelection()) {
 				drawElementOutline(i, Color.GOLD);
 			}
 			
@@ -355,6 +355,10 @@ public class CreatorView {
 		
 		TextInputWindow textWindow = new TextInputWindow("Name des Landes", skin, main.getBinds());
 		
+		if(country.getName() != null) {
+			textWindow.setText(country.getName());
+		}
+		
 		textWindow.giveKeyFocus(stageUI);
 		
 		popupTab.add(textWindow).width(500).fillX();
@@ -376,7 +380,7 @@ public class CreatorView {
 				
 				for(Country i: model.getCountries()) {
 					if(text.equals(i.getName())) {
-						textWindow.setText("");
+						textWindow.setText(text);
 						return;
 					}
 				}

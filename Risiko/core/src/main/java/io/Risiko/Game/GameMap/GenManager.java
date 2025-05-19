@@ -1,6 +1,7 @@
 package io.Risiko.Game.GameMap;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -13,29 +14,22 @@ public class GenManager {
 	
 	private HashMap<String, Continent> conts;
 	
-	private ArrayList<Country> countries;
 	private TravelNetwork travel;
+	
+	private ArrayList<Country> selection;
 
 	protected GenManager() {
 		conts = new HashMap<String, Continent>();
-		countries = new ArrayList<Country>();
 		travel = new TravelNetwork(new HashMap<String,Country>() ,new HashMap<String,HashSet<Country>>(), new HashMap<String,HashSet<Country>>());
 		
 		Country workingElementIn = new Country();
 		workingCountry = workingElementIn;
-	}
-	
-	protected GenManager(ModelSaveData saveData) {
-		conts = saveData.getConts();
-		countries = saveData.getCountries();
-		travel = saveData.getTravel();
 		
-		getWorkingCountry();
+		selection = new ArrayList<Country>();
 	}
 	
 	protected GenManager(HashMap<String, Continent> contsIn, ArrayList<Country> elementsIn) {
 		conts = contsIn;
-		countries = elementsIn;
 	}
 	
 	protected Country getWorkingCountry() {
@@ -60,14 +54,12 @@ public class GenManager {
 		conts.putIfAbsent(cont.getName(), cont);
 	}
 	
+	// Wird nur gerufen wenn schon geprüft wurde ob der Name frei ist
 	protected void changeContName(Continent cont, String newName) {
-		if(conts.get(cont.getName()) == null) return;
-		
-		conts.remove(cont.getName());
-		cont.setName(newName);
-		conts.putIfAbsent(newName, cont);
+		changeContName(cont.getName(), newName);
 	}
 	
+	// Wird nur gerufen wenn schon geprüft wurde ob der Name frei ist
 	protected void changeContName(String oldName, String newName) {
 		Continent cont = conts.get(oldName);
 		if(cont == null) return;
@@ -78,7 +70,7 @@ public class GenManager {
 	}
 	
 	protected void removeContinent(Continent cont) {
-		for(Country i: countries) {
+		for(Country i: travel.getStrToCountry().values()) {
 			if(i.getCont() == cont) return;
 		}
 		
@@ -91,7 +83,7 @@ public class GenManager {
 			return;
 		}
 		
-		for(Country i: countries) {
+		for(Country i: travel.getStrToCountry().values()) {
 			if(i.getCont() == cont) removeCountry(i);
 		}
 		
@@ -100,22 +92,54 @@ public class GenManager {
 		System.out.println(conts.size());
 	}
 	
-	protected ArrayList<Country> getCountries() {
-		return countries;
+	protected Collection<Country> getCountries() {
+		return travel.getStrToCountry().values();
 	}
 
 	protected void addCountry(Country element) {
-		if(countries.contains(element)) return;
+		if(travel.getStrToCountry().values().contains(element)) return;
 		
 		travel.addCountry(element);
-		countries.add(element);
+	}
+	
+	// Wird nur gerufen wenn schon geprüft wurde ob der Name frei ist
+	protected void changeCountryName(Country country, String newName) {
+		changeCountryName(country.getName() , newName);
+	}
+	
+	// Wird nur gerufen wenn schon geprüft wurde ob der Name frei ist
+	protected void changeCountryName(String oldName, String newName) {
+		
+		System.out.println("Hello <3");
+		
+		Country country = travel.getStrToCountry().get(oldName);
+		if(country == null) {
+			System.out.println("Country is null :(");
+			return;
+		}
+		
+		HashSet<Country> temp = travel.getMovMap().get(oldName);
+		travel.getMovMap().remove(oldName);
+		travel.getMovMap().put(newName, temp);
+		
+		temp = travel.getDraw().get(oldName);
+		travel.getDraw().remove(oldName);
+		travel.getDraw().put(newName, temp);
+		
+		travel.getStrToCountry().remove(oldName);
+		country.setName(newName);
+		travel.getStrToCountry().put(newName, country);
+		
+		System.out.println("--- --- ---");
+		System.out.println("Old Name:" + oldName);
+		System.out.println("New Name:" + country.getName());
+		System.out.println("--- --- ---");
 	}
 	
 	protected void removeCountry(Country element) {
-		if(!countries.contains(element)) return;
+		if(!travel.getStrToCountry().values().contains(element)) return;
 		
 		travel.removeCountry(element);
-		countries.remove(element);
 	}
 	
 	protected TravelNetwork getTravel() {
@@ -126,9 +150,9 @@ public class GenManager {
 		Rectangle rectA;
 		Rectangle rectB;
 		
-		ArrayList<Country> areDrawReady = new ArrayList<Country>(countries);
+		ArrayList<Country> areDrawReady = new ArrayList<Country>(travel.getStrToCountry().values());
 		
-		for(Country i: countries) {
+		for(Country i: travel.getStrToCountry().values()) {
 			if(!i.isDrawReady()) areDrawReady.remove(i);
 		}
 		
@@ -139,9 +163,17 @@ public class GenManager {
 				
 				boolean temp = rectA.overlaps(rectB);
 				
-				if(temp) travel.addRoute(countries.get(i), countries.get(x));
+				if(temp) travel.addRoute(areDrawReady.get(i), areDrawReady.get(x));
 			}
 		}
+	}
+	
+	public ArrayList<Country> getSelection() {
+		return selection;
+	}
+	
+	public void setSelection(ArrayList<Country> selectioIn) {
+		selection = selectioIn;
 	}
 	
 	public ModelSaveData saveModel() {
@@ -150,7 +182,6 @@ public class GenManager {
 	
 	protected void loadModel(ModelSaveData saveData) {
 		conts = saveData.getConts();
-		countries = saveData.getCountries();
 		travel = saveData.getTravel();
 		
 		getWorkingCountry();

@@ -37,8 +37,6 @@ public class CreatorController implements Controller {
 	private KeyProfile profile;
 	private CrtKeyProfile profileEnum;
 	
-	ArrayList<Country> selection;
-	
 	public CreatorController(Main mainIn) {
 		main = mainIn;
 		
@@ -52,8 +50,6 @@ public class CreatorController implements Controller {
 		
 		profile = new Edit();
 		profileEnum = CrtKeyProfile.EDIT;
-		
-		selection = new ArrayList<Country>();
 		
 		view.setViewPoly(true);
 		view.setViewOutline(true);
@@ -143,6 +139,10 @@ public class CreatorController implements Controller {
 	}
 	
 	public void queueSelect() {
+		
+		view.setViewPoly(true);
+		view.setViewOutline(true);
+		
 		if(!isSuspended()) {
 			profile = new Select();
 			newWorkingCountry();
@@ -151,14 +151,22 @@ public class CreatorController implements Controller {
 	}
 	
 	public void queueEdit() {
+		
+		view.setViewPoly(true);
+		view.setViewOutline(true);
+		
 		if(!isSuspended()) profile = new Edit();
 		profileEnum = CrtKeyProfile.EDIT;
 	}
 	
 	public void queueConnection() {
+		
+		view.setViewPoly(true);
+		view.setViewOutline(true);
+		
 		if(!isSuspended()) profile = new Connection();
 		newWorkingCountry();
-		selection.clear();
+		model.setSelection(new ArrayList<Country>());
 		profileEnum = CrtKeyProfile.CONNECTION;
 	}
 	
@@ -184,10 +192,6 @@ public class CreatorController implements Controller {
 			System.out.println("Error when saving to existing file");
 		}
 		return true;
-	}
-	
-	public ArrayList<Country> getSelection() {
-		return selection;
 	}
 	
 	public boolean saveModelToFileAs(String filename) {
@@ -245,19 +249,23 @@ public class CreatorController implements Controller {
 	}
 	
 	protected void receiveCountryName(String name, Country country) {
-		country.setName(name);
 		
 		if(name == null) {
+			System.out.println("name is null");
+			
 			model.setWorkingCountry(new Country());
 			return;
 		}
-		
+
 		for(Country i: model.getCountries()) {
 			if(i.getName() == name) {
 				model.setWorkingCountry(new Country());
 				return;
 			}
 		}
+		
+		if(country.getName() == null) country.setName(name);
+		else model.changeCountryName(country, name);
 		
 		model.addCountry(country);
 		model.setWorkingCountry(new Country());
@@ -338,14 +346,6 @@ public class CreatorController implements Controller {
 		if(keycode == binds.BACK) {
 			view.toggleMenus();
 		}
-		
-		if(keycode == binds.SHOW_POLY) {
-			view.toggleViewPoly();
-		}
-		
-		if(keycode == binds.OUTLINES) {
-			view.toggleViewOutline();
-		}
 	}
 	
 	private void mouseDrag(int buttoncode) {
@@ -394,12 +394,8 @@ public class CreatorController implements Controller {
 		@Override
 		public void keyPressed(int keycode) {
 			
-			if(keycode == binds.UNDO) {
-				model.getWorkingCountry().undoVert();
-			}
-			
 			if(keycode == binds.ACCEPT) {
-				newWorkingCountry();
+				view.countryNameRequest(model.getWorkingCountry());
 			}
 			
 			defKeyPressed(keycode);
@@ -455,6 +451,14 @@ public class CreatorController implements Controller {
 		@Override
 		public void keyPressed(int keycode) {
 			
+			if(keycode == binds.SHOW_POLY) {
+				view.toggleViewPoly();
+			}
+			
+			if(keycode == binds.OUTLINES) {
+				view.toggleViewOutline();
+			}
+			
 			if(keycode == binds.UNDO) {
 				model.getWorkingCountry().undoVert();
 			}
@@ -479,7 +483,22 @@ public class CreatorController implements Controller {
 			mouseDown = main.getMouseDown();
 			mouseDown = Utils.vec2unproject(cam, mouseDown);
 			
-			if(buttoncode == Input.Buttons.LEFT) model.getWorkingCountry().addVert(mouseDown);
+			if(buttoncode == Input.Buttons.LEFT) {
+				
+				if(!main.isKeyInputActive(binds.SHIFT)) model.getWorkingCountry().addVert(mouseDown);
+					
+				if(main.isKeyInputActive(binds.SHIFT)) {
+					for(Country i: model.getCountries()) {
+						if(i.isDrawReady() && i.getPolyFull().getPolygon().contains(mouseDown)) {
+							if(model.getWorkingCountry() == i) newWorkingCountry();
+
+							else setWorkingCountry(i);
+							break;
+						}
+					}
+				}
+			}
+			
 			
 			mouseDrag(buttoncode);
 			
@@ -505,36 +524,41 @@ public class CreatorController implements Controller {
 	private class Connection implements KeyProfile {
 		
 		private Connection() {
-			selection = new ArrayList<Country>();
+			model.setSelection(new ArrayList<Country>());
 		} 
 
 		@Override
 		public void keyPressed(int keycode) {
 			
+			ArrayList<Country> selection = model.getSelection();
+			
 			if(keycode == binds.UNDO) {
 				selection.clear();
 			}
 			
-			if(keycode == binds.ACCEPT && selection.size() == 2 && !main.isKeyInputActive(binds.SHIFT)) {
-				TravelNetwork travel = model.getTravel();
+			if(keycode == binds.ACCEPT) {
 				
-				Country countryA = selection.get(0);
-				Country countryB = selection.get(1);
-				
-				if(travel.getMovMap().get(countryA.getName()).contains(countryB)) {
+				if(selection.size() == 2 && !main.isKeyInputActive(binds.SHIFT)) {
+					TravelNetwork travel = model.getTravel();
 					
-					if(travel.getDraw().get(countryA.getName()).contains(countryB)) {
-						travel.removeDraw(countryA, countryB);
-						travel.removeRoute(countryA, countryB);
-						return;
-					}
+					Country countryA = selection.get(0);
+					Country countryB = selection.get(1);
 					
-					travel.addDraw(countryA, countryB);
-				} else travel.addRoute(countryA, countryB);
-			}else {
-				if(keycode == binds.ACCEPT) {
-					model.autoAddRoutes();
+					if(travel.getMovMap().get(countryA.getName()).contains(countryB)) {
+						
+						if(travel.getDraw().get(countryA.getName()).contains(countryB)) {
+							travel.removeDraw(countryA, countryB);
+							travel.removeRoute(countryA, countryB);
+							return;
+						}
+						
+						travel.addDraw(countryA, countryB);
+					} else {
+						travel.addRoute(countryA, countryB);
+					} 
 				}
+				
+				if(main.isKeyInputActive(binds.SHIFT)) model.autoAddRoutes();
 			}
 			
 			defKeyPressed(keycode);
@@ -549,6 +573,8 @@ public class CreatorController implements Controller {
 
 		@Override
 		public void buttonPressed(int buttoncode) {
+			
+			ArrayList<Country> selection = model.getSelection();
 			
 			mouseDown = main.getMouseDown();
 			mouseDown = Utils.vec2unproject(cam, mouseDown);
