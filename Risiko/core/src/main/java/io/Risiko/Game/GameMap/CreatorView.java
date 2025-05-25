@@ -524,7 +524,7 @@ public class CreatorView {
 			break;
 		
 		case CrtKeyProfile.EDIT:
-			toggleSelectMode.setLabel(new Label("Mode:Edit Connections", skin));
+			toggleSelectMode.setLabel(new Label("Mode: Polygon Editing", skin));
 			break;
 			
 		case CrtKeyProfile.SELECT:

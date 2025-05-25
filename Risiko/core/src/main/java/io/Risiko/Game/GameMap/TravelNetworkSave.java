@@ -50,7 +50,7 @@ public class TravelNetworkSave {
 			for(String x: contMembers.get(i)) {
 				temp.add(strToCountry.get(x));
 				
-				if(strToCountry.get(i) == null) {
+				if(strToCountry.get(x) == null) {
 					System.out.println("Key " + i + " is null in contMembers");
 				}
 				System.out.println("testttt");
