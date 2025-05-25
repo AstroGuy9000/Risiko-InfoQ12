@@ -17,16 +17,16 @@ public class PolygonTriangulated{	// --> Umgang mit Polygons in der Grafik verei
 	private Rectangle boundRect;
 	
 	public PolygonTriangulated() {
-		boundPad = 10;
+		boundPad = 7;
 	}	// leerer Konstruktor aufgrund von json-Serialisierung nötig
 	
 	public PolygonTriangulated(float[] verticesPolyIn) {
-		boundPad = 10;
+		boundPad = 7;
 		setPolygon(new Polygon(verticesPolyIn));
 	}
 	
 	public PolygonTriangulated(Polygon polyIn) {
-		boundPad = 10;	
+		boundPad = 7;	
 		setPolygon(polyIn);
 	}
 	
@@ -102,6 +102,6 @@ public class PolygonTriangulated{	// --> Umgang mit Polygons in der Grafik verei
 	}
 	
 	public Rectangle getBoundingRect() {
-		return this.boundRect;
+		return boundRect;
 	}
 }

@@ -7,29 +7,27 @@ import java.util.HashSet;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 
 public class GenManager {
 	
 	private Country workingCountry;
 	
-	private HashMap<String, Continent> conts;
+	private int workingLineIndex;
 	
 	private TravelNetwork travel;
 	
 	private ArrayList<Country> selection;
 
 	protected GenManager() {
-		conts = new HashMap<String, Continent>();
-		travel = new TravelNetwork(new HashMap<String,Country>() ,new HashMap<String,HashSet<Country>>(), new HashMap<String,HashSet<Country>>());
+		travel = new TravelNetwork();
 		
 		Country workingElementIn = new Country();
 		workingCountry = workingElementIn;
 		
 		selection = new ArrayList<Country>();
-	}
-	
-	protected GenManager(HashMap<String, Continent> contsIn, ArrayList<Country> elementsIn) {
-		conts = contsIn;
+		
+		workingLineIndex = -1;
 	}
 	
 	protected Country getWorkingCountry() {
@@ -42,54 +40,57 @@ public class GenManager {
 		workingCountry = element;
 	}
 	
-	protected HashMap<String, Continent> getContinents() {
-		return conts;
+	protected int getWorkingLineIndex() {
+		return workingLineIndex;
 	}
 	
-	protected void addContinent(String name, int bonus, Color color) {
-		conts.putIfAbsent(name, new Continent(name, bonus, color));
+	protected void setWorkingLineIndex(int workingLineIndexIn) {
+		workingLineIndex = workingLineIndexIn;
 	}
 	
-	protected void addContinent(Continent cont) {
-		conts.putIfAbsent(cont.getName(), cont);
-	}
-	
-	// Wird nur gerufen wenn schon geprüft wurde ob der Name frei ist
-	protected void changeContName(Continent cont, String newName) {
-		changeContName(cont.getName(), newName);
-	}
-	
-	// Wird nur gerufen wenn schon geprüft wurde ob der Name frei ist
-	protected void changeContName(String oldName, String newName) {
-		Continent cont = conts.get(oldName);
-		if(cont == null) return;
-		
-		conts.remove(oldName);
-		cont.setName(newName);
-		conts.putIfAbsent(newName, cont);
-	}
-	
-	protected void removeContinent(Continent cont) {
-		for(Country i: travel.getStrToCountry().values()) {
-			if(i.getCont() == cont) return;
-		}
-		
-		conts.remove(cont.getName());
-	}
-	
-	protected void nukeCont(Continent cont) {
-		if(!conts.containsKey(cont.getName())) {
-			System.out.println("oopsie");
+	protected void nextLine() {
+		if(travel.getDecoLines().isEmpty()) {
+			workingLineIndex = -1;
 			return;
 		}
 		
-		for(Country i: travel.getStrToCountry().values()) {
-			if(i.getCont() == cont) removeCountry(i);
+		if(workingLineIndex == -1 && !travel.getDecoLines().isEmpty()) {
+			workingLineIndex = 0;
+			return;
 		}
 		
-		conts.remove(cont.getName(), cont);
-		
-		System.out.println(conts.size());
+		if(workingLineIndex + 1 >= travel.getDecoLines().size()) {
+			workingLineIndex = 0;
+		} else {
+			workingLineIndex ++;
+		}
+	}
+	
+	protected void addLine(Vector2 p1, Vector2 p2) {
+		travel.addLine(p2, p1);
+	}
+	
+	protected void removeLine(int index) {
+		if(index < 0 || index >= travel.getDecoLines().size()) return;
+		travel.removeLine(index);
+		workingLineIndex = -1;
+	}
+	
+	protected HashMap<String, Continent> getContinents() {
+		return travel.getStrToCont();
+	}
+	
+	protected void addContinent(Continent cont) {
+		travel.addContinent(cont);
+	}
+	
+	// Wird nur gerufen wenn schon geprüft wurde ob der Name frei ist
+	protected void renameCont(Continent cont, String newName) {
+		travel.renameCont(cont, newName);
+	}
+	
+	protected void removeContinent(Continent cont) {
+		travel.removeContinent(cont);
 	}
 	
 	protected Collection<Country> getCountries() {
@@ -102,44 +103,12 @@ public class GenManager {
 		travel.addCountry(element);
 	}
 	
-	// Wird nur gerufen wenn schon geprüft wurde ob der Name frei ist
-	protected void changeCountryName(Country country, String newName) {
-		changeCountryName(country.getName() , newName);
+	protected void renameCountry(Country country, String newName) {
+		travel.renameCountry(country, newName);
 	}
 	
-	// Wird nur gerufen wenn schon geprüft wurde ob der Name frei ist
-	protected void changeCountryName(String oldName, String newName) {
-		
-		System.out.println("Hello <3");
-		
-		Country country = travel.getStrToCountry().get(oldName);
-		if(country == null) {
-			System.out.println("Country is null :(");
-			return;
-		}
-		
-		HashSet<Country> temp = travel.getMovMap().get(oldName);
-		travel.getMovMap().remove(oldName);
-		travel.getMovMap().put(newName, temp);
-		
-		temp = travel.getDraw().get(oldName);
-		travel.getDraw().remove(oldName);
-		travel.getDraw().put(newName, temp);
-		
-		travel.getStrToCountry().remove(oldName);
-		country.setName(newName);
-		travel.getStrToCountry().put(newName, country);
-		
-		System.out.println("--- --- ---");
-		System.out.println("Old Name:" + oldName);
-		System.out.println("New Name:" + country.getName());
-		System.out.println("--- --- ---");
-	}
-	
-	protected void removeCountry(Country element) {
-		if(!travel.getStrToCountry().values().contains(element)) return;
-		
-		travel.removeCountry(element);
+	protected void removeCountry(Country country) {	
+		travel.removeCountry(country);
 	}
 	
 	protected TravelNetwork getTravel() {
@@ -176,13 +145,18 @@ public class GenManager {
 		selection = selectioIn;
 	}
 	
-	public ModelSaveData saveModel() {
-		return new ModelSaveData(conts, travel);
+	public TravelNetworkSave saveModel() {
+		return new TravelNetworkSave(travel);
 	}
 	
-	protected void loadModel(ModelSaveData saveData) {
-		conts = saveData.getConts();
-		travel = saveData.getTravel();
+	protected void loadModel(TravelNetworkSave travelSave) {
+		travel = travelSave.rebuildTravelNetwork();
+		
+		getWorkingCountry();
+	}
+	
+	protected void putTravelNetwork(TravelNetwork travelIn) {
+		travel = travelIn;
 		
 		getWorkingCountry();
 	}
