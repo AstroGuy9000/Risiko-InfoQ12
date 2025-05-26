@@ -1,41 +1,33 @@
 package io.Risiko.Game.GameMap;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 
 public class GenManager {
 	
 	private Country workingCountry;
 	
-	private HashMap<String, Continent> conts;
+	private int workingLineIndex;
 	
-	private ArrayList<Country> countries;
 	private TravelNetwork travel;
+	
+	private ArrayList<Country> selection;
 
 	protected GenManager() {
-		conts = new HashMap<String, Continent>();
-		countries = new ArrayList<Country>();
-		travel = new TravelNetwork(new HashMap<String,Country>() ,new HashMap<String,HashSet<Country>>(), new HashMap<String,HashSet<Country>>());
+		travel = new TravelNetwork();
 		
 		Country workingElementIn = new Country();
 		workingCountry = workingElementIn;
-	}
-	
-	protected GenManager(ModelSaveData saveData) {
-		conts = saveData.getConts();
-		countries = saveData.getCountries();
-		travel = saveData.getTravel();
 		
-		getWorkingCountry();
-	}
-	
-	protected GenManager(HashMap<String, Continent> contsIn, ArrayList<Country> elementsIn) {
-		conts = contsIn;
-		countries = elementsIn;
+		selection = new ArrayList<Country>();
+		
+		workingLineIndex = -1;
 	}
 	
 	protected Country getWorkingCountry() {
@@ -48,74 +40,75 @@ public class GenManager {
 		workingCountry = element;
 	}
 	
-	protected HashMap<String, Continent> getContinents() {
-		return conts;
+	protected int getWorkingLineIndex() {
+		return workingLineIndex;
 	}
 	
-	protected void addContinent(String name, int bonus, Color color) {
-		conts.putIfAbsent(name, new Continent(name, bonus, color));
+	protected void setWorkingLineIndex(int workingLineIndexIn) {
+		workingLineIndex = workingLineIndexIn;
 	}
 	
-	protected void addContinent(Continent cont) {
-		conts.putIfAbsent(cont.getName(), cont);
-	}
-	
-	protected void changeContName(Continent cont, String newName) {
-		if(conts.get(cont.getName()) == null) return;
-		
-		conts.remove(cont.getName());
-		cont.setName(newName);
-		conts.putIfAbsent(newName, cont);
-	}
-	
-	protected void changeContName(String oldName, String newName) {
-		Continent cont = conts.get(oldName);
-		if(cont == null) return;
-		
-		conts.remove(oldName);
-		cont.setName(newName);
-		conts.putIfAbsent(newName, cont);
-	}
-	
-	protected void removeContinent(Continent cont) {
-		for(Country i: countries) {
-			if(i.getCont() == cont) return;
-		}
-		
-		conts.remove(cont.getName());
-	}
-	
-	protected void nukeCont(Continent cont) {
-		if(!conts.containsKey(cont.getName())) {
-			System.out.println("oopsie");
+	protected void nextLine() {
+		if(travel.getDecoLines().isEmpty()) {
+			workingLineIndex = -1;
 			return;
 		}
 		
-		for(Country i: countries) {
-			if(i.getCont() == cont) removeCountry(i);
+		if(workingLineIndex == -1 && !travel.getDecoLines().isEmpty()) {
+			workingLineIndex = 0;
+			return;
 		}
 		
-		conts.remove(cont.getName(), cont);
-		
-		System.out.println(conts.size());
+		if(workingLineIndex + 1 >= travel.getDecoLines().size()) {
+			workingLineIndex = 0;
+		} else {
+			workingLineIndex ++;
+		}
 	}
 	
-	protected ArrayList<Country> getCountries() {
-		return countries;
+	protected void addLine(Vector2 p1, Vector2 p2) {
+		travel.addLine(p2, p1);
+	}
+	
+	protected void removeLine(int index) {
+		if(index < 0 || index >= travel.getDecoLines().size()) return;
+		travel.removeLine(index);
+		workingLineIndex = -1;
+	}
+	
+	protected HashMap<String, Continent> getContinents() {
+		return travel.getStrToCont();
+	}
+	
+	protected void addContinent(Continent cont) {
+		travel.addContinent(cont);
+	}
+	
+	// Wird nur gerufen wenn schon geprüft wurde ob der Name frei ist
+	protected void renameCont(Continent cont, String newName) {
+		travel.renameCont(cont, newName);
+	}
+	
+	protected void removeContinent(Continent cont) {
+		travel.removeContinent(cont);
+	}
+	
+	protected Collection<Country> getCountries() {
+		return travel.getStrToCountry().values();
 	}
 
 	protected void addCountry(Country element) {
-		if(countries.contains(element)) return;
+		if(travel.getStrToCountry().values().contains(element)) return;
 		
 		travel.addCountry(element);
-		countries.add(element);
 	}
 	
-	protected void removeCountry(Country element) {
-		if(!countries.contains(element)) return;
-		
-		travel.removeCountry(element);
-		countries.remove(element);
+	protected void renameCountry(Country country, String newName) {
+		travel.renameCountry(country, newName);
+	}
+	
+	protected void removeCountry(Country country) {	
+		travel.removeCountry(country);
 	}
 	
 	protected TravelNetwork getTravel() {
@@ -126,9 +119,9 @@ public class GenManager {
 		Rectangle rectA;
 		Rectangle rectB;
 		
-		ArrayList<Country> areDrawReady = new ArrayList<Country>(countries);
+		ArrayList<Country> areDrawReady = new ArrayList<Country>(travel.getStrToCountry().values());
 		
-		for(Country i: countries) {
+		for(Country i: travel.getStrToCountry().values()) {
 			if(!i.isDrawReady()) areDrawReady.remove(i);
 		}
 		
@@ -139,19 +132,31 @@ public class GenManager {
 				
 				boolean temp = rectA.overlaps(rectB);
 				
-				if(temp) travel.addRoute(countries.get(i), countries.get(x));
+				if(temp) travel.addRoute(areDrawReady.get(i), areDrawReady.get(x));
 			}
 		}
 	}
 	
-	public ModelSaveData saveModel() {
-		return new ModelSaveData(conts, travel);
+	public ArrayList<Country> getSelection() {
+		return selection;
 	}
 	
-	protected void loadModel(ModelSaveData saveData) {
-		conts = saveData.getConts();
-		countries = saveData.getCountries();
-		travel = saveData.getTravel();
+	public void setSelection(ArrayList<Country> selectioIn) {
+		selection = selectioIn;
+	}
+	
+	public TravelNetworkSave saveModel() {
+		return new TravelNetworkSave(travel);
+	}
+	
+	protected void loadModel(TravelNetworkSave travelSave) {
+		travel = travelSave.rebuildTravelNetwork();
+		
+		getWorkingCountry();
+	}
+	
+	protected void putTravelNetwork(TravelNetwork travelIn) {
+		travel = travelIn;
 		
 		getWorkingCountry();
 	}

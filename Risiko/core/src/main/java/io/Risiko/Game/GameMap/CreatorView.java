@@ -78,6 +78,8 @@ public class CreatorView {
 	
 	private boolean viewPoly;
 	private boolean viewOutline;
+	private boolean viewCont;
+	private boolean viewConnections;
 	
 	public CreatorView(CreatorController controllerIn) {
 		controller = controllerIn;
@@ -187,22 +189,18 @@ public class CreatorView {
 			public void changed (ChangeEvent event, Actor actor) {
 				switch(controller.getProfileEnum()) {
 					default:
-						toggleSelectMode.setLabel(new Label("Mode: Polygon Editing", skin));
 						controller.queueEdit();
 						break;
 					
 					case CrtKeyProfile.EDIT:
-						toggleSelectMode.setLabel(new Label("Mode:Edit Connections", skin));
 						controller.queueConnection();
 						break;
 						
 					case CrtKeyProfile.SELECT:
-						toggleSelectMode.setLabel(new Label("Mode: Polygon Editing", skin));
 						controller.queueEdit();
 						break;
 						
 					case CrtKeyProfile.CONNECTION:
-						toggleSelectMode.setLabel(new Label("Mode:  Select Element", skin));
 						controller.queueSelect(); 
 						break;
 				}
@@ -261,12 +259,41 @@ public class CreatorView {
 		
 		main.getShRend().begin(ShapeType.Filled);
 		
+		if(viewOutline) {
+			for(float[] i: model.getTravel().getDecoLines()) {
+				Utils.drawRoundedLine(main.getShRend(), i, 3.5f, Color.DARK_GRAY);
+			}
+		}
+		
+		if(model.getWorkingLineIndex() != -1) {
+			Utils.drawRoundedLine(main.getShRend(), model.getTravel().getDecoLines().get(model.getWorkingLineIndex()), 5, Color.RED);
+		}
+		
+		if(viewCont) {
+			for(String i: model.getTravel().getContMembers().keySet()) {
+				Continent cont = model.getContinents().get(i);
+				Color contColor = cont.getColor();
+				
+				for(Country x: model.getTravel().getContMembers().get(i)) {
+					drawElementOutline(x, contColor);
+					drawElementPoly(x, contColor);
+				}
+			}
+			
+			main.getShRend().end();
+			
+			stageUI.act();
+			stageUI.draw();
+			
+			return;
+		}
+		
 		if(viewPoly) {
 			for(Country i: model.getCountries()) {
 				drawElementPoly(i, Color.RED);
 			}
 			
-			for(Country i: controller.getSelection()) {
+			for(Country i: model.getSelection()) {
 				drawElementPoly(i, Color.YELLOW);
 			}
 		}
@@ -276,11 +303,30 @@ public class CreatorView {
 				drawElementOutline(i, Color.FIREBRICK);
 			}
 			
-			for(Country i: controller.getSelection()) {
+			for(Country i: model.getSelection()) {
 				drawElementOutline(i, Color.GOLD);
 			}
+		}
+		
+		if(viewConnections) {
+			drawTravel(Color.GRAY);
 			
-			drawTravel(Color.DARK_GRAY ,Color.MAROON);
+			TravelNetwork travel = model.getTravel();
+			
+			Vector2 vecTemp1 = new Vector2();
+			Vector2 vecTemp2 = new Vector2();
+			
+			for(Country i: model.getSelection()) {
+				for(Country x: travel.getMovMap().get(i.getName())) {
+					Utils.drawRoundedLine(
+							main.getShRend(), 
+							i.getPolyFull().getPolygon().getCentroid(vecTemp1),
+							x.getPolyFull().getPolygon().getCentroid(vecTemp2), 
+							1f, 
+							Color.MAROON);
+				}
+				
+			}
 		}
 		
 		if(viewPoly) drawElementPoly(model.getWorkingCountry(), Color.GREEN);
@@ -303,19 +349,28 @@ public class CreatorView {
 	
 	public void toggleMenus() {
 		if(popupTab.hasChildren()) {
+			if(escMenu.isVisible()) {
+				popupTab.clear();
+				
+				controller.suspendInput(); 
+				System.out.println("suspend: popupTab --> escMenu");
+				
+				backTex = templateTex;
+				
+				return;
+			}
+			
 			popupTab.clear();
-		
-			controller.suspendInput(); 
-			System.out.println("suspend: popupTab --> escMenu");
-			
-			backTex = templateTex;
-			
+			controller.resumeInput(); 
 			return;
 		}
 		if(escMenu.isVisible()) {
 			escMenu.setVisible(false);
 			
 			System.out.println("resume: escMenu --> goto game");
+			
+			setViewPoly(true);
+			setViewOutline(true);
 			
 			controller.resumeInput();
 		}
@@ -347,10 +402,32 @@ public class CreatorView {
 		else viewOutline = true;
 	}
 	
+	public void setViewCont(boolean bool) {
+		viewCont = bool;
+	}
+	
+	public void toggleViewCont() {
+		if(viewCont) viewCont = false;
+		else viewCont = true;
+	}
+	
+	public void setViewConnections(boolean bool) {
+		viewConnections = bool;
+	}
+	
+	public void toggleViewConnections() {
+		if(viewConnections) viewConnections = false;
+		else viewConnections = true;
+	}
+	
 	protected void countryNameRequest(Country country) {
 		controller.suspendInput();
 		
 		TextInputWindow textWindow = new TextInputWindow("Name des Landes", skin, main.getBinds());
+		
+		if(country.getName() != null) {
+			textWindow.setText(country.getName());
+		}
 		
 		textWindow.giveKeyFocus(stageUI);
 		
@@ -373,7 +450,7 @@ public class CreatorView {
 				
 				for(Country i: model.getCountries()) {
 					if(text.equals(i.getName())) {
-						textWindow.setText("");
+						textWindow.setText(text);
 						return;
 					}
 				}
@@ -396,6 +473,70 @@ public class CreatorView {
 		});
 	}
 	
+	protected void continentSelectionRequest() {
+		if(model.getContinents().keySet().isEmpty()) return;
+		
+		controller.suspendInput();
+		
+		popupTab.clear();
+		
+		Window window = new Window("", skin, "dialog");
+		ListCust<String> list = new ListCust<String>(skin, main.getBinds());
+		TextButton confirm = new TextButton("Confirm", skin);
+		
+		Object[] arrGeneric = model.getContinents().keySet().toArray();
+ 		String[] contNameArr = new String[model.getContinents().keySet().size()];
+		for(int i = 0; i < contNameArr.length; i++) {
+			contNameArr[i] = (String)arrGeneric[i];
+		}
+		
+		list.setItems(contNameArr);
+		stageUI.setKeyboardFocus(list);
+		list.setTypeToSelect(false);
+		
+		confirm.addListener(new ChangeListener() {
+			@Override
+			public void changed(ChangeEvent event, Actor actor) {
+				
+				System.out.println("hiiiii");
+				System.out.println(list.getSelected());
+				
+				if(list.getSelected() != null) {
+					String contName = list.getSelected();
+					
+					model.getTravel().addMember(model.getContinents().get(contName), model.getSelection());
+					
+					toggleMenus();
+				}
+			}});
+		
+		window.add(list);
+		window.row();
+		window.add(confirm);
+		
+		popupTab.add(window);
+	}
+	
+	protected void updateModeSelectorName() {
+		switch(controller.getProfileEnum()) {
+		default:
+			toggleSelectMode.setLabel(new Label("Mode: Polygon Editing", skin));
+			break;
+		
+		case CrtKeyProfile.EDIT:
+			toggleSelectMode.setLabel(new Label("Mode: Polygon Editing", skin));
+			break;
+			
+		case CrtKeyProfile.SELECT:
+			toggleSelectMode.setLabel(new Label("Mode:  Select Element", skin));
+			break;
+			
+		case CrtKeyProfile.CONNECTION:
+			toggleSelectMode.setLabel(new Label("Mode:Edit Connections", skin));
+			break;
+	}
+	}
+	
 	private void drawElementPoly(Country element, Color color) {
 		int vertsNumber = element.getVertsList().size();
 		
@@ -403,8 +544,8 @@ public class CreatorView {
 			
 		default:
 			Utils.drawPolygonFilled(main.getShRend(), element.getPolyFull(), color);
-			Rectangle rect = element.getPolyFull().getBoundingRect();
-			Utils.drawDebugRect(main.getShRend(), rect, color);
+//			Rectangle rect = element.getPolyFull().getBoundingRect();
+//			Utils.drawDebugRect(main.getShRend(), rect, color);
 			break;
 			
 		case 4:		
@@ -476,47 +617,34 @@ public class CreatorView {
 		}
 	}
 	
-	private void drawTravel(Color colorNorm, Color colorAlways) {
+	private void drawTravel(Color color) {
 		TravelNetwork travel = model.getTravel();
 		
 		HashMap<String,Country> strToCountry = travel.getStrToCountry();
 		
-		HashMap<String,HashSet<Country>> movMap = travel.getMovMap();
-		HashMap<String,HashSet<Country>> drawAlways = travel.getDraw();
-		
 		Vector2 tempVec1 = new Vector2();
 		Vector2 tempVec2 = new Vector2();
 		
-		for(Country i: model.getCountries()) {
+
+		HashMap<String,HashSet<Country>> movMap = travel.getMovMap();
+			
+		for(Country i: travel.getStrToCountry().values()) {
+				
 			for(Country x: movMap.get(i.getName())) {
 				
 				Utils.drawRoundedLine(
-						main.getShRend(), 
-						
+							main.getShRend(), 
+							
 						i.getPolyFull().getPolygon().getCentroid(tempVec1),
 						x.getPolyFull().getPolygon().getCentroid(tempVec2),
-						
-						1.5f,
-						colorNorm);
+							
+						2f,
+						color);
 			}
 		}
 		
-		for(Country i: model.getCountries()) {
-			for(Country  x: drawAlways.get(i.getName())) {
-				Utils.drawRoundedLine(
-						main.getShRend(), 
-						
-						i.getPolyFull().getPolygon().getCentroid(tempVec1),
-						x.getPolyFull().getPolygon().getCentroid(tempVec2),
-						
-						1.5f,
-						colorAlways);
-			}
-		}
 	}
 	
-	
-	// NOCH NICHT FERTIG --> ETWAS KOMISCHES MIT DEN FARBEN LOS
 	private class ContinentMaker extends Window {
 
 		private KeyBinds binds;
@@ -553,6 +681,9 @@ public class CreatorView {
 		
 		private ContinentMaker(Skin skin) {
 			super("Kontinent", skin);
+			
+			setViewPoly(false);
+			setViewOutline(false);
 			
 			setMovable(false);
 			setResizable(false);
@@ -600,6 +731,11 @@ public class CreatorView {
 				
 				@Override
 				public void acceptPressed() {
+					stageUI.unfocusAll();
+				}
+				
+				@Override
+				public void backPressed() {
 					stageUI.unfocusAll();
 				}
 			};
@@ -671,6 +807,8 @@ public class CreatorView {
 		
 		private void updateList() {
 			
+			String selected = selectCont.getSelected();
+			
 			Object[] objArr = model.getContinents().keySet().toArray();
 			String[] contsNameArr = new String[model.getContinents().size()];
 			
@@ -684,8 +822,11 @@ public class CreatorView {
 			selectCont.setItems(contsNameArr);
 			System.out.println(selectCont.getItems().size);
 			
-			if(selectCont.getSelected() != null) {
+			if(selectCont.getItems().contains(selected, false)) {
+				selectCont.setSelected(selected);
 				setCurrCont(model.getContinents().get(selectCont.getSelected()));
+			} else {
+				newCurrCont();
 			}
 		}
 		
@@ -712,9 +853,12 @@ public class CreatorView {
 		}
 		
 		private void updateRGBsliders() {
-			red.setValue(tempColor.r*255);
-			green.setValue(tempColor.g*255);
-			blue.setValue(tempColor.b*255);
+			
+			Color storeColor = new Color(tempColor);
+			
+			red.setValue(storeColor.r*255);
+			green.setValue(storeColor.g*255);
+			blue.setValue(storeColor.b*255);
 			
 			updateRGBdisplay();
 		}
@@ -755,10 +899,10 @@ public class CreatorView {
 			
 			currCont = cont;
 			
-			tempName = cont.getName();
+			tempName = new String(cont.getName());
 			name.setText(tempName);
 			tempBonus = cont.getBonus();
-			tempColor = cont.getColor();
+			tempColor = new Color(cont.getColor());
 			
 			updateName();
 			updateBonus();
@@ -778,13 +922,12 @@ public class CreatorView {
 				tempContArr.remove(currCont.getName(), currCont);
 				
 				if(dupeName(tempContArr, tempName)) {
-					updateList();
 					return false;
 				}
 				
 				updateRGBdisplay();
 				
-				model.changeContName(currCont, tempName);
+				model.renameCont(currCont, tempName);
 				currCont.setBonus(tempBonus);
 				currCont.setColor(tempColor);
 				
@@ -794,7 +937,6 @@ public class CreatorView {
 			}
 			
 			if(dupeName(model.getContinents(), tempName)) {
-				updateList();
 				return false;
 			}	
 			
@@ -812,7 +954,7 @@ public class CreatorView {
 		}
 		
 		private void deleteCont() {
-			model.nukeCont(currCont);
+			model.removeContinent(currCont);
 			updateList();
 			newCurrCont();
 		}

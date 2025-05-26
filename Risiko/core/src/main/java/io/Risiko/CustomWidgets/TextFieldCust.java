@@ -906,7 +906,7 @@ public class TextFieldCust extends Widget implements Disableable {
 
 			if (!hasKeyboardFocus()) return false;
 			
-			if (keycode == binds.BACK) backPressed();
+			if (keycode == Keys.ESCAPE) backPressed();
 
 			boolean repeat = false;
 			boolean ctrl = UIUtils.ctrl();
@@ -1010,7 +1010,7 @@ public class TextFieldCust extends Widget implements Disableable {
 				}
 			}
 			
-			if(keycode == binds.ACCEPT) {
+			if(keycode == Keys.ENTER) {
 				acceptPressed();
 			}
 
