@@ -195,15 +195,29 @@ public class CreatorController implements Controller {
 			
 			view.toggleMenus();
 			view.toggleMenus();
+			
+			return true;
 		}catch (Exception e) {
 			System.out.println("Error when saving to existing file");
 		}
-		return true;
+		
+		return false;
 	}
 	
 	public boolean saveModelToFileAs(String filename) {
+		
+		String fullFilename = filename + ".json";
+		
+		FileHandle dir = Gdx.files.local("MapMaker/");
+		FileHandle[] dirFiles = dir.list();
+		for(FileHandle i: dirFiles) {
+			if(fullFilename.equals(i.name())) {
+				return false;
+			}
+		}
+		
 		Json json = new Json();
-		FileHandle file = Gdx.files.local("MapMaker/"+filename + ".json");
+		FileHandle file = Gdx.files.local("MapMaker/" + fullFilename);
 		
 		try {
 			file.writeString(json.prettyPrint(model.saveModel()), false);
@@ -212,10 +226,11 @@ public class CreatorController implements Controller {
 			
 			view.toggleMenus();
 			view.toggleMenus();
+			return true;
 		}catch (Exception e) {
 			System.out.println("Error when saving to new File");
+			return false;
 		}
-		return true;
 	}
 
 	public boolean loadModel(FileHandle file) {

@@ -18,6 +18,14 @@ public class TravelNetwork {
 	
 	private ArrayList<float[]> decoLines;
 	
+	public TravelNetwork() {
+		strToContinent = new HashMap<String,Continent>();
+		strToCountry = new HashMap<String,Country>();
+		contMembers = new HashMap<String,HashSet<Country>>();
+		movement = new HashMap<String,HashSet<Country>>();
+		decoLines = new ArrayList<float[]>();
+	}
+	
 	public TravelNetwork(HashMap<String,Continent> strToContinentIn, HashMap<String,Country> strToCountryIn, HashMap<String,HashSet<Country>> contMembersIn, 
 			HashMap<String,HashSet<Country>> movementIn, ArrayList<float[]> decoLinesIn) {
 		
@@ -28,12 +36,12 @@ public class TravelNetwork {
 		decoLines = decoLinesIn;
 	}
 	
-	public TravelNetwork() {
-		strToContinent = new HashMap<String,Continent>();
-		strToCountry = new HashMap<String,Country>();
-		contMembers = new HashMap<String,HashSet<Country>>();
-		movement = new HashMap<String,HashSet<Country>>();
-		decoLines = new ArrayList<float[]>();
+	public TravelNetwork(TravelNetwork travel) {
+		strToContinent = travel.getStrToCont();
+		strToCountry = travel.getStrToCountry();
+		contMembers = travel.getContMembers();
+		movement = travel.getMovMap();
+		decoLines = travel.getDecoLines();
 	}
 	
 	protected void addContinent(Continent cont) {

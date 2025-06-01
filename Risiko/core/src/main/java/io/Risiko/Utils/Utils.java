@@ -17,6 +17,11 @@ public class Utils {
 	
 	private Utils() {};
 	
+	// https://www.baeldung.com/java-generating-random-numbers-in-range
+	static public int getRandomNumber(int min, int max) {
+	    return (int) ((Math.random() * (max - min)) + min);
+	}
+	
 	static public Vector2 vec2unproject(Camera camIn, Vector2 vec2) {
 		Vector3 vec3Temp = camIn.unproject(new Vector3(
 				vec2.x,

@@ -14,18 +14,14 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 //import com.badlogic.gdx.utils.ScreenUtils;
 
 import io.Risiko.Main;
+import io.Risiko.Game.GameMain.Preparation.GameOptionsMenu;
 import io.Risiko.Game.GameMap.CreatorController;
 import io.Risiko.Interfaces.Controller;
+import io.Risiko.Utils.Menu;
 
-public class MainMenu implements Controller {
+public class MainMenu extends Menu {
 
-	private Main main;
-	private Stage stageUI;
-	private Table mainTab;
 	private Table creditsTab;
-	private Skin skin;
-
-	//private Color backgroundColor;
 
 	private Label title;
 	private TextButton startGame;
@@ -36,25 +32,12 @@ public class MainMenu implements Controller {
 	private Label credits;
 
 	public MainMenu(Main mainIn) {
-		main = mainIn;
-		
-		stageUI = main.getStageUI();
-		stageUI.clear();
-		
-		skin = main.getSkin();
-
-		mainTab = new Table(skin);
-		mainTab.setFillParent(true);
-		stageUI.addActor(mainTab);
-		mainTab.setBounds(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-		mainTab.setBackground("window");
+		super(mainIn);
 
 		creditsTab = new Table(skin);
 		creditsTab.setFillParent(true);
 		stageUI.addActor(creditsTab);
 		creditsTab.setBounds(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-
-		//backgroundColor = ColorsC64.BLUE;
 
 		title = new Label("Risiko", skin);
 		title.setFontScale(3);
@@ -65,7 +48,8 @@ public class MainMenu implements Controller {
 		startGame = new TextButton("Spiel Starten", skin);
 		startGame.addListener(new ChangeListener() {
 			public void changed (ChangeEvent event, Actor actor) {
-				System.out.println("Changed!");
+				stageUI.clear();
+				main.setState(new GameOptionsMenu(main));
 			}});
 
 		changeBinds = new TextButton("Einstellungen", skin);
@@ -100,41 +84,5 @@ public class MainMenu implements Controller {
 		mainTab.add(quit);
 
 		creditsTab.pad(25).bottom().left().add(credits);
-	}
-
-	@Override
-	public void drawScreen() {
-		//ScreenUtils.clear(backgroundColor);
-		stageUI.draw();
-	}
-	
-	@Override
-	public void resize(int width, int height) {}
-
-	@Override
-	public void doTick(ArrayList<Integer> keyInputs, ArrayList<Integer> buttonInputs) {
-		// TODO Auto-generated method stub
-		stageUI.act();
-	}
-
-	@Override
-	public void keyPressed(int keycode) {
-		main.addKeyInput(keycode);
-	}
-
-	@Override
-	public void keyDepressed(int keycode) {
-		main.removeKeyInput(keycode);
-	}
-
-	@Override
-	public void buttonPressed(int buttoncode) {
-		main.addButtonInput(buttoncode);
-	}
-
-	@Override
-	public void buttonDepressed(int buttoncode) {
-		main.removeButtonInput(buttoncode);
-
 	}
 }

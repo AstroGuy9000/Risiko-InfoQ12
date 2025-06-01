@@ -42,7 +42,7 @@ public class TravelNetworkSave {
 		decoLines = travel.getDecoLines();
 	}
 	
-	protected TravelNetwork rebuildTravelNetwork() {
+	public TravelNetwork rebuildTravelNetwork() {
 		
 		HashMap<String,HashSet<Country>> contMembersRebuilt = new HashMap<String,HashSet<Country>>();
 		for(String i: contMembers.keySet()) {

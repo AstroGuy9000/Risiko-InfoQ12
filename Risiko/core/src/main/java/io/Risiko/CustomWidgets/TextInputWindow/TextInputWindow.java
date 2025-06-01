@@ -41,6 +41,9 @@ public class TextInputWindow extends Window{
 					i.exitInput();
 				}
 			}
+
+			@Override
+			public void thingTyped(char character) {}
 		};
 		textField.setFillParent(false);
 		

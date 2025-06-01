@@ -19,14 +19,9 @@ import io.Risiko.KeyBinds;
 import io.Risiko.Main;
 import io.Risiko.CustomWidgets.ListCust;
 import io.Risiko.Interfaces.Controller;
+import io.Risiko.Utils.Menu;
 
-public class BindsMenu implements Controller{
-
-	private Main main;
-	private Stage stageUI;
-	private Table mainTab;
-	private Table notifTab;
-	private Skin skin;
+public class BindsMenu extends Menu {
 	
 	private Label title;
 	private ListCust<String> nameList;
@@ -47,23 +42,7 @@ public class BindsMenu implements Controller{
 	private int whoIsListening;
 	
 	public BindsMenu(Main mainIn) {
-		main = mainIn;
-		
-		stageUI = main.getStageUI();
-		stageUI.clear();
-		
-		skin = main.getSkin();
-		
-		mainTab = new Table(skin);
-		mainTab.setFillParent(true);
-		stageUI.addActor(mainTab);
-		mainTab.setBounds(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-		mainTab.setBackground("window");
-		
-		notifTab = new Table(skin);
-		notifTab.setFillParent(true);
-		stageUI.addActor(notifTab);
-		notifTab.setBounds(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		super(mainIn);
 		
 		unassignedCounter = 0;
 		
@@ -161,19 +140,6 @@ public class BindsMenu implements Controller{
 		
 		//stageUI.setDebugAll(true);
 	}
-
-	@Override
-	public void drawScreen() {
-		stageUI.draw();
-	}
-	
-	@Override
-	public void resize(int width, int height) {}
-	
-	@Override
-	public void doTick(ArrayList<Integer> keyInputs, ArrayList<Integer> buttonInputs) {
-		stageUI.act();
-	}
 	
 	@Override
 	public void keyPressed(int keycode) {
@@ -184,7 +150,7 @@ public class BindsMenu implements Controller{
 					main.addKeyInput(keycode);
 					System.out.println("nuh uh");
 					setListening(false);
-					notifTab.clear();
+					popupTab.clear();
 					return;
 				}
 				bindsArr[whoIsListening] = unassigned + unassignedCounter;
@@ -204,7 +170,7 @@ public class BindsMenu implements Controller{
 			bindsArr[whoIsListening] = keycode;
 			updateListContent();
 			setListening(false);
-			notifTab.clear();
+			popupTab.clear();
 		}
 		
 		if(keycode == main.getBinds().ACCEPT) {
@@ -212,21 +178,6 @@ public class BindsMenu implements Controller{
 			whoIsListening = bindsList.getSelectedIndex();
 		}
 		main.addKeyInput(keycode);
-	}
-	
-	@Override
-	public void keyDepressed(int keycode) {
-		main.removeKeyInput(keycode);
-	}
-	
-	@Override
-	public void buttonPressed(int buttoncode) {
-		main.addButtonInput(buttoncode);
-	}
-	
-	@Override
-	public void buttonDepressed(int buttoncode) {
-		main.removeButtonInput(buttoncode);
 	}
 	
 	private void updateListContent() {
@@ -263,11 +214,11 @@ public class BindsMenu implements Controller{
 		isListening = bool;
 		if(bool) {
 			stageUI.unfocusAll();
-			notifTab.reset();
-			notifTab.add(notif);
+			popupTab.reset();
+			popupTab.add(notif);
 		} else {
 			stageUI.setKeyboardFocus(bindsList);
-			notifTab.reset();
+			popupTab.reset();
 		}
 	}
 }

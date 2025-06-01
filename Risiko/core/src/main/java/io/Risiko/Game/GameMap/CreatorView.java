@@ -127,6 +127,8 @@ public class CreatorView {
 		loadFile = new TextButton("Load File", skin);
 		loadFile.addListener(new ChangeListener() {
 			public void changed (ChangeEvent event, Actor actor) {
+				if(popupTab.hasChildren()) return;
+				
 				FileMenu loadFileMenu = new FileMenu("Load", skin, Gdx.files.local("MapMaker"), "json", main.getBinds());
 				
 				loadFileMenu.setKeyboardFocus(stageUI);
@@ -145,6 +147,8 @@ public class CreatorView {
 		saveFile = new TextButton("Save File", skin);
 		saveFile.addListener(new ChangeListener() {
 			public void changed (ChangeEvent event, Actor actor) {
+				if(popupTab.hasChildren()) return;
+				
 				FileMenu saveFileMenu = new FileMenu("Save", skin, Gdx.files.local("MapMaker"), "json", main.getBinds());
 				popupTab.add(saveFileMenu);
 				
@@ -163,6 +167,8 @@ public class CreatorView {
 		saveFileAs = new TextButton("Save File As", skin);
 		saveFileAs.addListener(new ChangeListener() {
 			public void changed (ChangeEvent event, Actor actor) {
+				if(popupTab.hasChildren()) return;
+				
 				TextInputWindow textWindow = new TextInputWindow("New File", skin, main.getBinds());
 				
 				textWindow.giveKeyFocus(stageUI);
@@ -171,8 +177,7 @@ public class CreatorView {
 				textWindow.addListener(new TextInputWindowListener() {
 					@Override
 					public void textAccepted(String text) {
-						controller.saveModelToFileAs(text);
-						popupTab.clear();
+						if(controller.saveModelToFileAs(text)) popupTab.clear();
 					}
 					
 					@Override

@@ -4,18 +4,20 @@ import java.util.ArrayList;
 
 import com.badlogic.gdx.math.Vector2;
 
+import io.Risiko.Game.GameMain.Player;
 import io.Risiko.Utils.PolygonTriangulated;
 
 public class Country {
 
 	private String name;
-	private Continent cont;
 	
 	private ArrayList<Float> vertsList;
 	
 	private PolygonTriangulated polyFull;
 	
 	private boolean drawReady;
+	
+	private Player occupant;
 	
 	protected Country() {
 		vertsList = new ArrayList<Float>();
@@ -24,7 +26,6 @@ public class Country {
 	protected Country(String nameIn, Continent contIn, ArrayList<Float> vertsListIn) {;
 	
 		name = nameIn;
-		cont = contIn;
 	
 		vertsList = vertsListIn;
 	
@@ -34,7 +35,6 @@ public class Country {
 	protected Country(String nameIn, Continent contIn, PolygonTriangulated polyFullIn) {;
 		
 		name = nameIn;
-		cont = contIn;
 		
 		vertsList = new ArrayList<Float>();
 		for(float i: polyFullIn.getVerticesRaw()) {
@@ -50,14 +50,6 @@ public class Country {
 	
 	protected void setName(String nameIn) {
 		name = nameIn;
-	}
-	
-	public Continent getCont() {
-		return cont;
-	}
-	
-	protected void setCont(Continent contIn) {
-		cont = contIn;
 	}
 	
 	public PolygonTriangulated getPolyFull() {
@@ -120,9 +112,11 @@ public class Country {
 		return drawReady;
 	}
 	
-	public boolean isGameReady() {
-		if(!isDrawReady()) return false;
-		if(name == null || cont == null) return false;
-		return true;
+	public void setOccupant(Player occupantIn) {
+		occupant = occupantIn;
+	}
+	
+	public Player getOccupant() {
+		return occupant;
 	}
 }
