@@ -16,6 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import io.Risiko.Main;
 import io.Risiko.Game.GameMain.Preparation.GameOptionsMenu;
 import io.Risiko.Game.GameMap.CreatorController;
+import io.Risiko.Game.Testing.RGBdistanceTestMenu;
 import io.Risiko.Interfaces.Controller;
 import io.Risiko.Utils.Menu;
 
@@ -28,6 +29,8 @@ public class MainMenu extends Menu {
 	private TextButton changeBinds;
 	private TextButton makeMap;
 	private TextButton quit;
+	
+	private TextButton testing;
 
 	private Label credits;
 
@@ -72,6 +75,13 @@ public class MainMenu extends Menu {
 				stageUI.clear();
 				System.exit(0);
 			}});
+		
+		testing =  new TextButton("Test-Zone", skin);
+		testing.addListener(new ChangeListener() {
+			public void changed (ChangeEvent event, Actor actor) {
+				stageUI.clear();
+				main.setState(new RGBdistanceTestMenu(main));
+			}});
 
 		mainTab.center().add(title).padBottom(60);
 		mainTab.row();
@@ -81,7 +91,9 @@ public class MainMenu extends Menu {
 		mainTab.row();
 		mainTab.add(makeMap).padBottom(70);
 		mainTab.row();
-		mainTab.add(quit);
+		mainTab.add(quit).padBottom(100);
+		mainTab.row();
+		mainTab.add(testing);
 
 		creditsTab.pad(25).bottom().left().add(credits);
 	}

@@ -22,6 +22,10 @@ public class Utils {
 	    return (int) ((Math.random() * (max - min)) + min);
 	}
 	
+	static public float square(float num) {
+		return num*num;
+	}
+	
 	static public Vector2 vec2unproject(Camera camIn, Vector2 vec2) {
 		Vector3 vec3Temp = camIn.unproject(new Vector3(
 				vec2.x,
@@ -43,7 +47,10 @@ public class Utils {
 		float rNew = r/255f;
 		float gNew = g/255f;
 		float bNew = b/255f;
-		return new Color(rNew, gNew, bNew, a);
+		
+		Color returnColor = new Color(rNew, gNew, bNew, a);
+		returnColor.clamp();
+		return returnColor;
 	}
 	
 	static public void drawPolygonOutline(ShapeRenderer shRend, PolygonTriangulated poly, float width, Color color) {
