@@ -214,7 +214,7 @@ public class RGBdistanceTestMenu extends Menu {
 		
 		colorPointTex = new Texture(colorMapPoint);
 		
-		colorDistance = calcColorDistance(colorPoint, distanceInt);
+		colorDistance = Utils.calcColorDistance(colorPoint, distanceInt);
 		
 		Pixmap colorMapDistance = new Pixmap( 100, 100, Format.RGBA8888 );
 		colorMapDistance.setColor(colorDistance);
@@ -226,40 +226,6 @@ public class RGBdistanceTestMenu extends Menu {
 		popupTab.left().add(new Image(colorPointTex)).padBottom(200);
 		popupTab.row();
 		popupTab.add(new Image(colorDistanceTex));
-	}
-	
-	private Color calcColorDistance(Color point, int dist) {
-		if(dist == 0) return point;
-		
-		Vector3 colorPointVector = new Vector3(point.r*255, point.g*255, point.b*255);
-		
-		float pointR = point.r*255;
-		float pointG = point.g*255;
-		float pointB = point.b*255;
-		
-		float a = 1 + ( Utils.square(pointG/pointR) ) + ( Utils.square(pointB/pointR) );
-		float b = -2*(pointR + ( (Utils.square(pointG))/pointR ) + ( (Utils.square(pointB))/pointR ));
-		float c = Utils.square(pointR) + Utils.square(pointG) + Utils.square(pointB) - Utils.square( (float) (Math.sqrt(Utils.square(pointR) + Utils.square(pointG) + Utils.square(pointB)) + dist));
-		
-		float calc = (float) ( (-1*b + Math.sqrt( b*b - (4 * a * c) )) / (2 * a) );
-		
-		int calcR = (int) (calc - pointR);
-		int calcG = (int) (( calc*(pointG/pointR) ) - pointG);
-		int calcB = (int) (( calc*(pointB/pointR) ) - pointB);
-		
-		Color calcColor = Utils.rgba(calcR, calcG, calcB, 1);
-		
-		System.out.println(dist);
-		System.out.println("cR" + calcR);
-		System.out.println("cG" + calcG);
-		System.out.println("cB" + calcB);
-		System.out.println("--");
-		System.out.println("pR" + pointR);
-		System.out.println("pG" + pointG);
-		System.out.println("pB" + pointB);
-		System.out.println("-|-|-|-|-");
-		
-		return calcColor;
 	}
 	
 	private String cleanString(String text) {

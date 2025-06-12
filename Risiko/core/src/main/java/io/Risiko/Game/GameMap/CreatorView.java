@@ -654,6 +654,8 @@ public class CreatorView {
 
 		private KeyBinds binds;
 		
+		private int maxConts;
+		
 		private Continent currCont;
 		
 		private String tempName;
@@ -661,7 +663,7 @@ public class CreatorView {
 		private final int maxBonus = 30;
 		private int tempBonus;
 		
-		private Color tempColor;
+//		private Color tempColor;
 		
 		// Linker Teil des Fensters
 		private VerticalGroup leftSide;
@@ -680,9 +682,9 @@ public class CreatorView {
 		private TextButton plus;
 		private TextButton minus;
 		
-		private Slider red;
-		private Slider green;
-		private Slider blue;
+//		private Slider red;
+//		private Slider green;
+//		private Slider blue;
 		
 		private ContinentMaker(Skin skin) {
 			super("Kontinent", skin);
@@ -695,6 +697,8 @@ public class CreatorView {
 			setFillParent(false);
 			
 			binds = main.getBinds();
+			
+			maxConts = 10;
 			
 			// Linker Teil des Fensters
 			leftSide = new VerticalGroup();
@@ -765,23 +769,23 @@ public class CreatorView {
 					bonus.setText(String.format("%3s", Integer.toString(tempBonus)));
 				}});
 			
-			red = new Slider(0, 255, 1, false, skin);
-			red.addListener(new ChangeListener() {
-				public void changed(ChangeEvent event, Actor actor) {
-					updateRGBdisplay();
-				}});
-			
-			green = new Slider(0, 255, 1, false, skin);
-			green.addListener(new ChangeListener() {
-				public void changed(ChangeEvent event, Actor actor) {
-					updateRGBdisplay();
-				}});
-			
-			blue = new Slider(0, 255, 1, false, skin);
-			blue.addListener(new ChangeListener() {
-				public void changed(ChangeEvent event, Actor actor) {
-					updateRGBdisplay();
-				}});
+//			red = new Slider(0, 255, 1, false, skin);
+//			red.addListener(new ChangeListener() {
+//				public void changed(ChangeEvent event, Actor actor) {
+//					updateRGBdisplay();
+//				}});
+//			
+//			green = new Slider(0, 255, 1, false, skin);
+//			green.addListener(new ChangeListener() {
+//				public void changed(ChangeEvent event, Actor actor) {
+//					updateRGBdisplay();
+//				}});
+//			
+//			blue = new Slider(0, 255, 1, false, skin);
+//			blue.addListener(new ChangeListener() {
+//				public void changed(ChangeEvent event, Actor actor) {
+//					updateRGBdisplay();
+//				}});
 			
 			bonusModule.addActor(plus);
 			bonusModule.addActor(minus);
@@ -789,9 +793,9 @@ public class CreatorView {
 			
 			rightSide.addActor(name);
 			rightSide.addActor(bonusModule);
-			rightSide.addActor(red);
-			rightSide.addActor(green);
-			rightSide.addActor(blue);
+//			rightSide.addActor(red);
+//			rightSide.addActor(green);
+//			rightSide.addActor(blue);
 			
 			add(leftSide);
 			add(rightSide);
@@ -857,31 +861,31 @@ public class CreatorView {
 			bonus.setText(String.format("%3s", Integer.toString(tempBonus)));
 		}
 		
-		private void updateRGBsliders() {
-			
-			Color storeColor = new Color(tempColor);
-			
-			red.setValue(storeColor.r*255);
-			green.setValue(storeColor.g*255);
-			blue.setValue(storeColor.b*255);
-			
-			updateRGBdisplay();
-		}
+//		private void updateRGBsliders() {
+//			
+//			Color storeColor = new Color(tempColor);
+//			
+//			red.setValue(storeColor.r*255);
+//			green.setValue(storeColor.g*255);
+//			blue.setValue(storeColor.b*255);
+//			
+//			updateRGBdisplay();
+//		}
 		
-		private void updateRGBdisplay() {
-			tempColor = new Color(red.getValue()/255f, green.getValue()/255f, blue.getValue()/255f, 1);
-			
-			Pixmap pixmap = new Pixmap( 1, 1, Format.RGBA8888 );
-			pixmap.setColor(tempColor);
-			pixmap.drawPixel(0, 0);
-			
-			backTex = new Texture(pixmap);
-		}
+//		private void updateRGBdisplay() {
+//			tempColor = new Color(red.getValue()/255f, green.getValue()/255f, blue.getValue()/255f, 1);
+//			
+//			Pixmap pixmap = new Pixmap( 1, 1, Format.RGBA8888 );
+//			pixmap.setColor(tempColor);
+//			pixmap.drawPixel(0, 0);
+//			
+//			backTex = new Texture(pixmap);
+//		}
 		
 		private void updateAll() {
 			updateName();
 			updateBonus();
-			updateRGBsliders();
+//			updateRGBsliders();
 			
 			updateList();
 		}
@@ -907,11 +911,11 @@ public class CreatorView {
 			tempName = new String(cont.getName());
 			name.setText(tempName);
 			tempBonus = cont.getBonus();
-			tempColor = new Color(cont.getColor());
+//			tempColor = new Color(cont.getColor());
 			
 			updateName();
 			updateBonus();
-			updateRGBsliders();
+//			updateRGBsliders();
 		}
 		
 		private void newCurrCont() {
@@ -922,6 +926,8 @@ public class CreatorView {
 		
 		private boolean saveToModel() {
 			
+			if(model.getAvailableContColor() == null) return false;
+			
 			if(model.getContinents().containsValue(currCont)) {
 				HashMap<String, Continent> tempContArr = new HashMap<String, Continent>(model.getContinents());
 				tempContArr.remove(currCont.getName(), currCont);
@@ -930,26 +936,28 @@ public class CreatorView {
 					return false;
 				}
 				
-				updateRGBdisplay();
+//				updateRGBdisplay();
 				
 				model.renameCont(currCont, tempName);
 				currCont.setBonus(tempBonus);
-				currCont.setColor(tempColor);
+				currCont.setColor(model.getAvailableContColor());
 				
 				updateList();
 				
 				return true;
+			} else {
+				if(model.getContinents().size() >= maxConts) return false;
 			}
 			
 			if(dupeName(model.getContinents(), tempName)) {
 				return false;
 			}	
 			
-			updateRGBdisplay();
+//			updateRGBdisplay();
 			
 			currCont.setName(tempName);
 			currCont.setBonus(tempBonus);
-			currCont.setColor(tempColor);
+			currCont.setColor(model.getAvailableContColor());
 			
 			model.addContinent(currCont);
 			
