@@ -239,7 +239,7 @@ public class CreatorView {
 		if(backgroundTex.exists()) templateTex = new Texture("mapMaker/template.png");
 		else {
 			Pixmap pixmap = new Pixmap( 1, 1, Format.RGBA8888 );
-			pixmap.setColor(Color.BLUE);
+			pixmap.setColor(Utils.rgba(154, 157, 161, 1));
 			pixmap.drawPixel(0, 0);
 			templateTex = new Texture(pixmap);
 		}
@@ -261,7 +261,6 @@ public class CreatorView {
 		main.getBatch().end();
 		
 		main.getShRend().setProjectionMatrix(cam.combined);
-		
 		main.getShRend().begin(ShapeType.Filled);
 		
 		if(viewOutline) {
@@ -289,8 +288,6 @@ public class CreatorView {
 			
 			stageUI.act();
 			stageUI.draw();
-			
-			return;
 		}
 		
 		if(viewPoly) {
@@ -853,8 +850,6 @@ public class CreatorView {
 			}
 			
 			tempName = nameNew;
-			
-			System.out.println(name.getText());
 		}
 		
 		private void updateBonus() {

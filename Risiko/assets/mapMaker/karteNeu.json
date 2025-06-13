@@ -2,61 +2,61 @@
 strToContinent: {
 	South America: {
 		name: South America
-		bonus: 15
+		bonus: 2
 		color: {
-			r: 0.41960785
-			g: 0.92156863
-			b: 0.18039216
+			r: 0.6117647
+			g: 0.14117648
+			b: 0.48235294
 			a: 1
 		}
 	}
 	Asia: {
 		name: Asia
-		bonus: 30
+		bonus: 7
 		color: {
-			r: 0.89411765
-			g: 0.24705882
-			b: 0.98039216
+			r: 0.07450981
+			g: 0.1764706
+			b: 0.5803922
 			a: 1
 		}
 	}
 	Europe: {
 		name: Europe
-		bonus: 20
+		bonus: 5
 		color: {
-			r: 0.89411765
-			g: 0.03137255
-			b: 0.22352941
+			r: 0.047058824
+			g: 0.36078432
+			b: 0.09411765
 			a: 1
 		}
 	}
 	Africa: {
 		name: Africa
-		bonus: 15
+		bonus: 3
 		color: {
-			r: 0.9529412
-			g: 0.6901961
-			b: 0.20784314
+			r: 0.07058824
+			g: 0.5372549
+			b: 0.4862745
+			a: 1
+		}
+	}
+	Australia: {
+		name: Australia
+		bonus: 2
+		color: {
+			r: 0.3882353
+			g: 0.023529412
+			b: 0.47058824
 			a: 1
 		}
 	}
 	North America: {
 		name: North America
-		bonus: 20
+		bonus: 5
 		color: {
-			r: 0.30588236
-			g: 0.32156864
-			b: 0.6392157
-			a: 1
-		}
-	}
-	Oceania: {
-		name: Oceania
-		bonus: 10
-		color: {
-			r: 0.827451
-			g: 0.42352942
-			b: 0.09019608
+			r: 0.5882353
+			g: 0.023529412
+			b: 0.023529412
 			a: 1
 		}
 	}
@@ -7965,11 +7965,11 @@ contMembers: {
 		}
 		{
 			class: java.lang.String
-			value: Madagascar
+			value: North Africa
 		}
 		{
 			class: java.lang.String
-			value: North Africa
+			value: Madagascar
 		}
 		{
 			class: java.lang.String
@@ -7980,14 +7980,32 @@ contMembers: {
 			value: East Africa
 		}
 	]
-	North America: [
+	Australia: [
 		{
 			class: java.lang.String
-			value: East Coast
+			value: Western Australia
 		}
 		{
 			class: java.lang.String
+			value: New Guniea
+		}
+		{
+			class: java.lang.String
+			value: Eastern Australia
+		}
+		{
+			class: java.lang.String
+			value: Indonesia
+		}
+	]
+	North America: [
+		{
+			class: java.lang.String
 			value: Central America
+		}
+		{
+			class: java.lang.String
+			value: East Coast
 		}
 		{
 			class: java.lang.String
@@ -8007,33 +8025,15 @@ contMembers: {
 		}
 		{
 			class: java.lang.String
-			value: North Territoy
-		}
-		{
-			class: java.lang.String
 			value: Ontario
 		}
 		{
 			class: java.lang.String
+			value: North Territoy
+		}
+		{
+			class: java.lang.String
 			value: Greenland
-		}
-	]
-	Oceania: [
-		{
-			class: java.lang.String
-			value: Western Australia
-		}
-		{
-			class: java.lang.String
-			value: New Guniea
-		}
-		{
-			class: java.lang.String
-			value: Eastern Australia
-		}
-		{
-			class: java.lang.String
-			value: Indonesia
 		}
 	]
 }
@@ -8049,11 +8049,11 @@ movement: {
 		}
 		{
 			class: java.lang.String
-			value: Ukraine
+			value: Siberia
 		}
 		{
 			class: java.lang.String
-			value: Siberia
+			value: Ukraine
 		}
 	]
 	East Coast: [
@@ -8077,11 +8077,11 @@ movement: {
 	Central America: [
 		{
 			class: java.lang.String
-			value: East Coast
+			value: Venezuela
 		}
 		{
 			class: java.lang.String
-			value: Venezuela
+			value: East Coast
 		}
 		{
 			class: java.lang.String
@@ -8135,11 +8135,11 @@ movement: {
 		}
 		{
 			class: java.lang.String
-			value: North Territoy
+			value: Ontario
 		}
 		{
 			class: java.lang.String
-			value: Ontario
+			value: North Territoy
 		}
 	]
 	Siam: [
@@ -8149,11 +8149,11 @@ movement: {
 		}
 		{
 			class: java.lang.String
-			value: Indonesia
+			value: India
 		}
 		{
 			class: java.lang.String
-			value: India
+			value: Indonesia
 		}
 	]
 	Egypt: [
@@ -8213,11 +8213,11 @@ movement: {
 	West Coast: [
 		{
 			class: java.lang.String
-			value: East Coast
+			value: Central America
 		}
 		{
 			class: java.lang.String
-			value: Central America
+			value: East Coast
 		}
 		{
 			class: java.lang.String
@@ -8735,11 +8735,11 @@ movement: {
 		}
 		{
 			class: java.lang.String
-			value: North Territoy
+			value: Ontario
 		}
 		{
 			class: java.lang.String
-			value: Ontario
+			value: North Territoy
 		}
 		{
 			class: java.lang.String
@@ -8761,11 +8761,11 @@ movement: {
 		}
 		{
 			class: java.lang.String
-			value: Madagascar
+			value: North Africa
 		}
 		{
 			class: java.lang.String
-			value: North Africa
+			value: Madagascar
 		}
 		{
 			class: java.lang.String

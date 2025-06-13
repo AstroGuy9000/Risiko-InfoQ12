@@ -20,6 +20,8 @@ public class GameplayModel extends TravelNetwork {
 	public GameplayModel(TravelNetwork travel, ArrayList<Player> playersIn) {
 		super(travel);
 		
+		cardBank = new ArrayList<Card>();
+		
 		ArrayList<Country> countries = new ArrayList<Country>(getStrToCountry().values());
 		
 		int temp = (int) Math.floor( countries.size()/3.0 );
@@ -52,6 +54,10 @@ public class GameplayModel extends TravelNetwork {
 		cardBank.add(new Card());
 		
 		players = playersIn;
+	}
+	
+	public ArrayList<Player> getPlayers() {
+		return players;
 	}
 	
 	private Card pullCard() {
