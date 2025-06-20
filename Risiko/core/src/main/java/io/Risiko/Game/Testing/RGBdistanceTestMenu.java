@@ -70,7 +70,7 @@ public class RGBdistanceTestMenu extends Menu {
 
 			@Override
 			public void thingTyped(char character) {
-				String textClean = cleanString(r.getText());
+				String textClean = Utils.onlyNumsInString(r.getText());
 				if(textClean.isBlank()) return;
 				rInt = Integer.valueOf(textClean);
 				r.setText(textClean);
@@ -93,7 +93,7 @@ public class RGBdistanceTestMenu extends Menu {
 
 			@Override
 			public void thingTyped(char character) {
-				String textClean = cleanString(g.getText());
+				String textClean = Utils.onlyNumsInString(g.getText());
 				if(textClean.isBlank()) return;
 				gInt = Integer.valueOf(textClean);
 				g.setText(textClean);
@@ -118,7 +118,7 @@ public class RGBdistanceTestMenu extends Menu {
 
 			@Override
 			public void thingTyped(char character) {
-				String textClean = cleanString(b.getText());
+				String textClean = Utils.onlyNumsInString(b.getText());
 				if(textClean.isBlank()) return;
 				bInt = Integer.valueOf(textClean);
 				b.setText(textClean);
@@ -141,7 +141,7 @@ public class RGBdistanceTestMenu extends Menu {
 
 			@Override
 			public void thingTyped(char character) {
-				String textClean = cleanString(distance.getText());
+				String textClean = Utils.onlyNumsInString(distance.getText());
 				if(textClean.isBlank()) return;
 				distanceInt = Integer.valueOf(textClean);
 				distance.setText(textClean);
@@ -226,9 +226,5 @@ public class RGBdistanceTestMenu extends Menu {
 		popupTab.left().add(new Image(colorPointTex)).padBottom(200);
 		popupTab.row();
 		popupTab.add(new Image(colorDistanceTex));
-	}
-	
-	private String cleanString(String text) {
-		return text.replaceAll("[^0-9.]", "");
 	}
 }

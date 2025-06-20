@@ -20,7 +20,7 @@ import io.Risiko.CustomWidgets.TextFieldCust;
 import io.Risiko.Game.GameMain.Player;
 import io.Risiko.Game.GameMain.Gameplay.GameplayController;
 import io.Risiko.Game.GameMap.TravelNetwork;
-import io.Risiko.Interfaces.Controller;
+import io.Risiko.Utils.Controller;
 import io.Risiko.Utils.Menu;
 import io.Risiko.Utils.Utils;
 
@@ -130,6 +130,7 @@ public class AddPlayersMenu extends Menu {
 		if(availablePlayerColors.size() <= 1) {
 			return false;
 		}
+		if(players.size() > 5) return false;
 		return true;
 	}
 	

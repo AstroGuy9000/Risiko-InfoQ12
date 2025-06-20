@@ -4,4 +4,6 @@ public interface Mission {
 
 	public boolean checkWinCon();
 	
+	public String getDescription();
+	
 }

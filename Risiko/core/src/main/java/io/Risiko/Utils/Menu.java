@@ -8,8 +8,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 
 import io.Risiko.Main;
-import io.Risiko.Interfaces.Controller;
 
+/**
+ * Class die dazu dient schneller textbasierte Menüs zu implementieren
+ */
 public abstract class Menu implements Controller {
 
 	protected Main main;

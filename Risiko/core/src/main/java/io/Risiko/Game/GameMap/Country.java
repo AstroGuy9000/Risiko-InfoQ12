@@ -7,6 +7,9 @@ import com.badlogic.gdx.math.Vector2;
 import io.Risiko.Game.GameMain.Player;
 import io.Risiko.Utils.PolygonTriangulated;
 
+/**
+ * Enthält die Daten eines Landes 
+ */
 public class Country {
 
 	private String name;
@@ -17,22 +20,28 @@ public class Country {
 	
 	private boolean drawReady;
 	
+	private boolean flag;
+	
 	private Player occupant;
+	private int troops;
 	
 	protected Country() {
 		vertsList = new ArrayList<Float>();
+		troops = 1;
 	}
 	
-	protected Country(String nameIn, Continent contIn, ArrayList<Float> vertsListIn) {;
+	protected Country(String nameIn, ArrayList<Float> vertsListIn) {;
 	
 		name = nameIn;
 	
 		vertsList = vertsListIn;
 	
 		makePoly();
+		
+		troops = 1;
 	}
 	
-	protected Country(String nameIn, Continent contIn, PolygonTriangulated polyFullIn) {;
+	protected Country(String nameIn, PolygonTriangulated polyFullIn) {;
 		
 		name = nameIn;
 		
@@ -112,11 +121,37 @@ public class Country {
 		return drawReady;
 	}
 	
-	public void setOccupant(Player occupantIn) {
-		occupant = occupantIn;
+	public boolean getFlag() {
+		return flag;
+	}
+	
+	public void setFlag(boolean flagIn) {
+		flag = flagIn;
 	}
 	
 	public Player getOccupant() {
 		return occupant;
+	}
+	
+	public void setOccupant(Player occupantIn) {
+		if(!occupantIn.getCountries().contains(this)) {
+			occupantIn.addCountry(this);
+			return;
+		}
+		if(occupantIn != occupant && occupant != null) occupant.removeCountry(this);
+		occupant = occupantIn;
+	}
+	
+	public int getTroops() {
+		return troops;
+	}
+	
+	public void addTroops(int n) {
+		troops = troops + n;
+	}
+	
+	public void setTroops(int n) {
+		troops = n;
+		if(troops <= 0) troops = 1;
 	}
 }

@@ -1,6 +1,7 @@
 package io.Risiko.Game.GameMain.Preparation;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
@@ -15,6 +16,7 @@ import io.Risiko.Main;
 import io.Risiko.CustomWidgets.ListCust;
 import io.Risiko.CustomWidgets.FileMenu.FileMenu;
 import io.Risiko.CustomWidgets.FileMenu.FileMenuListener;
+import io.Risiko.Game.GameMap.Country;
 import io.Risiko.Game.GameMap.TravelNetwork;
 import io.Risiko.Game.GameMap.TravelNetworkSave;
 import io.Risiko.Game.Menus.MainMenu;
@@ -53,7 +55,7 @@ public class GameOptionsMenu extends Menu {
 					}});
 				}});
 		
-		selectedMapName = new Label("Selected Map:\n" + "NONE" + "\n-            -", skin);
+		selectedMapName = new Label("Selected Map:\n" + "NONE" + "\n-              -", skin);
 		
 		// muss noch Auswahl des Spielmodus implementieren
 		
@@ -84,10 +86,38 @@ public class GameOptionsMenu extends Menu {
 	
 	private void setSelectedMap(FileHandle file) {
 		if(loadModel(file)) {
-			selectedMapName.setText("Selected Map:\n" + file.nameWithoutExtension() + "\n-IS  PLAYABLE-");
+			if(isMapDone()) selectedMapName.setText("Selected Map:\n" + file.nameWithoutExtension() + "\n-IS    FINISHED-");
+			else selectedMapName.setText("Selected Map:\n" + file.nameWithoutExtension() + "\n-IS  UNFINISHED-");
+			
 		} else {
-			selectedMapName.setText("Selected Map:\n" + file.nameWithoutExtension() + "\n-NOT PLAYABLE-");
+			selectedMapName.setText("Selected Map:\n" + file.nameWithoutExtension() + "\n-NOT   PLAYABLE-");
 		}
+	}
+	
+	private boolean isMapDone() {
+		
+		if(selectedMap.getStrToCountry().values().toArray().length <= 0) return false;
+		
+		Object[] tempCountryArr = selectedMap.getStrToCountry().values().toArray();
+		ArrayList<Country> countries = new ArrayList<Country>();
+		for(Object i: tempCountryArr) {
+			countries.add( (Country) i);
+		}
+		
+		for(HashSet<Country> i: selectedMap.getContMembers().values()) {
+			for(Country x: i) {
+				countries.remove(x);
+			}
+		}
+		
+		if(!countries.isEmpty()) return false;
+		
+		Country start = (Country) selectedMap.getStrToCountry().values().toArray()[0];
+		for(Country i: selectedMap.getStrToCountry().values()) {
+			if(!selectedMap.depthSearch(start, i)) return false;
+		}
+		
+		return true;
 	}
 	
 	@Override

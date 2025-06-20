@@ -18,7 +18,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import io.Risiko.KeyBinds;
 import io.Risiko.Main;
 import io.Risiko.CustomWidgets.ListCust;
-import io.Risiko.Interfaces.Controller;
+import io.Risiko.Utils.Controller;
 import io.Risiko.Utils.Menu;
 
 public class BindsMenu extends Menu {

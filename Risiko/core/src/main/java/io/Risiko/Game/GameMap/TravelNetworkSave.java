@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
+/**
+ * Wird nur verwendet um <TravelNetwork> in einer Datei zu speichern und zu laden.
+ * Dient zur Optimisierung der Dateiengröße.
+ */
 public class TravelNetworkSave {
 	
 	private HashMap<String,Continent> strToContinent;

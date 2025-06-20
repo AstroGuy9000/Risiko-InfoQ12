@@ -288,6 +288,8 @@ public class CreatorView {
 			
 			stageUI.act();
 			stageUI.draw();
+			
+			return;
 		}
 		
 		if(viewPoly) {

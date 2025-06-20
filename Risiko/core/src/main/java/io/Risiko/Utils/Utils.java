@@ -19,9 +19,17 @@ public class Utils {
 	
 	private Utils() {};
 	
+	static public String onlyNumsInString(String text) {
+		return text.replaceAll("[^0-9.]", "");
+	}
+	
 	// https://www.baeldung.com/java-generating-random-numbers-in-range
 	static public int getRandomNumber(int min, int max) {
 	    return (int) ((Math.random() * (max - min)) + min);
+	}
+	
+	static public int d6() {
+	    return getRandomNumber(1, 6);
 	}
 	
 	static public float square(float num) {

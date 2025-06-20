@@ -17,7 +17,7 @@ import io.Risiko.Main;
 import io.Risiko.Game.GameMain.Preparation.GameOptionsMenu;
 import io.Risiko.Game.GameMap.CreatorController;
 import io.Risiko.Game.Testing.RGBdistanceTestMenu;
-import io.Risiko.Interfaces.Controller;
+import io.Risiko.Utils.Controller;
 import io.Risiko.Utils.Menu;
 
 public class MainMenu extends Menu {

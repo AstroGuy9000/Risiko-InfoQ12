@@ -13,8 +13,8 @@ import com.badlogic.gdx.utils.ScreenUtils;
 
 import io.Risiko.KeyBinds;
 import io.Risiko.Main;
-import io.Risiko.Interfaces.Controller;
-import io.Risiko.Interfaces.KeyProfile;
+import io.Risiko.Utils.Controller;
+import io.Risiko.Utils.KeyProfile;
 import io.Risiko.Utils.Utils;
 
 public class CreatorController implements Controller {
@@ -318,7 +318,7 @@ public class CreatorController implements Controller {
 	
 	// Default Verhalten für manche Sachen
 	
-	public void defDuringPressed(ArrayList<Integer> keyInputs, ArrayList<Integer> buttonInputs) {
+	private void defDuringPressed(ArrayList<Integer> keyInputs, ArrayList<Integer> buttonInputs) {
 		
 		if(keyInputs.contains(binds.UP)) {
 			cam.position.y += 2;

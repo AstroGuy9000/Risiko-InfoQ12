@@ -146,8 +146,8 @@ public class GenManager {
 		return selection;
 	}
 	
-	public void setSelection(ArrayList<Country> selectioIn) {
-		selection = selectioIn;
+	public void setSelection(ArrayList<Country> selectionIn) {
+		selection = selectionIn;
 	}
 	
 	public Color getAvailableContColor() {

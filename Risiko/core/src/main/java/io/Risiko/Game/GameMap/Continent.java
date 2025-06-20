@@ -2,6 +2,9 @@ package io.Risiko.Game.GameMap;
 
 import com.badlogic.gdx.graphics.Color;
 
+/**
+ * Enthält die Daten eines Kontinents (Zugehörige Länder sind im <TravelNetwork> zu finden)
+ */
 public class Continent {
 
 	private String name;

@@ -1,4 +1,4 @@
-package io.Risiko.Interfaces;
+package io.Risiko.Utils;
 
 import java.util.ArrayList;
 

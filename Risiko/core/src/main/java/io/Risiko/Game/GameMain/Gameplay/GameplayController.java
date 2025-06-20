@@ -3,6 +3,8 @@ package io.Risiko.Game.GameMain.Gameplay;
 import java.util.ArrayList;
 import java.util.HashSet;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -16,9 +18,9 @@ import io.Risiko.Game.GameMain.Player;
 import io.Risiko.Game.GameMap.Continent;
 import io.Risiko.Game.GameMap.Country;
 import io.Risiko.Game.GameMap.TravelNetwork;
-import io.Risiko.Interfaces.BehaviourProfile;
-import io.Risiko.Interfaces.Controller;
-import io.Risiko.Interfaces.KeyProfile;
+import io.Risiko.Utils.BehaviourProfile;
+import io.Risiko.Utils.Controller;
+import io.Risiko.Utils.KeyProfile;
 import io.Risiko.Utils.Utils;
 
 public class GameplayController implements Controller{
@@ -38,6 +40,8 @@ public class GameplayController implements Controller{
 	
 	private OrthographicCamera cam;
 	
+	private KeyProfile profile;
+	
 	public GameplayController(Main mainIn, TravelNetwork map,ArrayList<Player> playersIn) {
 		main = mainIn;
 		
@@ -56,6 +60,8 @@ public class GameplayController implements Controller{
 		}
 		
 		playersIn.get(0).distributeCountries(countries);
+		
+		profile = new Generic();
 	}
 
 	@Override
@@ -71,32 +77,29 @@ public class GameplayController implements Controller{
 
 	@Override
 	public void doTick(ArrayList<Integer> keyInputs, ArrayList<Integer> buttonInputs) {
-		// TODO Auto-generated method stub
+		profile.duringPressed(keyInputs, buttonInputs);
 		
+		cam.update();
 	}
 
 	@Override
 	public void keyPressed(int keycode) {
-		// TODO Auto-generated method stub
-		
+		profile.keyPressed(keycode);
 	}
 
 	@Override
 	public void keyDepressed(int keycode) {
-		// TODO Auto-generated method stub
-		
+		profile.keyDepressed(keycode);
 	}
 
 	@Override
 	public void buttonPressed(int buttoncode) {
-		// TODO Auto-generated method stub
-		
+		profile.buttonPressed(buttoncode);
 	}
 
 	@Override
 	public void buttonDepressed(int buttoncode) {
-		// TODO Auto-generated method stub
-		
+		profile.buttonDepressed(buttoncode);
 	}
 	
 	private void clampCam() {
@@ -119,6 +122,14 @@ public class GameplayController implements Controller{
 				Main.WORLD_HEIGHT - realViewportHeight/ 2f);
 	}
 	
+	public void suspendInput() {
+		profile = new Suspended();
+	}
+	
+	public void resumeInput() {
+		profile = new Generic();
+	}
+	
 	protected Main getMain() {
 		return main;
 	}
@@ -127,13 +138,165 @@ public class GameplayController implements Controller{
 		return model;
 	}
 	
-	private class TroopMovementPhase implements BehaviourProfile {
-
-		@Override
-		public boolean step() {
-			// TODO Auto-generated method stub
-			return false;
+	private void defDuringPressed(ArrayList<Integer> keyInputs, ArrayList<Integer> buttonInputs) {
+		
+		if(keyInputs.contains(binds.UP)) {
+			cam.position.y += 2;
+			clampCam();
+		}
+			
+		if(keyInputs.contains(binds.DOWN)) {
+			cam.position.y -= 2;
+			clampCam();
 		}
 		
+		if(keyInputs.contains(binds.LEFT)) {
+			cam.position.x -= 2;
+			clampCam();
+		}
+		
+		if(keyInputs.contains(binds.RIGHT)) {
+			cam.position.x += 2;
+			clampCam();
+		}
+		
+		if(keyInputs.contains(binds.ZOOM_IN)) {
+			cam.zoom += 0.05;
+			clampCam();
+		}
+		
+		if(keyInputs.contains(binds.ZOOM_OUT)) {
+			cam.zoom -= 0.05;
+			clampCam();
+		}
+		
+		if(buttonInputs.contains(Input.Buttons.RIGHT)) {	
+			if(mouseDragLast == null) mouseDragLast = new Vector2(Gdx.input.getX(), Gdx.input.getY());
+			mouseDrag = new Vector2(Gdx.input.getX(), Gdx.input.getY());	// wenn man mouseDrag aus dem Input-Handler geht funktionerts nicht richtig???
+			
+			cam.position.x += (
+					(mouseDragLast.x - mouseDrag.x) * panMult
+					);
+			cam.position.y += (
+					(mouseDrag.y - mouseDragLast.y) * panMult
+					);	// andersrum weil World-Koordinaten von unten nach oben und Screen Koordinaten von oben nach unten gehen
+
+			mouseDragLast = mouseDrag;
+			
+			clampCam();
+		}
+	}
+	
+	private void mouseDrag(int buttoncode) {
+		if(buttoncode == Input.Buttons.RIGHT) {
+			mouseDrag = new Vector2(Gdx.input.getX(), Gdx.input.getY());	// mouseDrag aus dem Input-Handler ist wieder komisch
+			mouseDragLast = mouseDrag;
+		}
+	}
+	
+	private class Suspended implements KeyProfile {
+
+		@Override
+		public void keyPressed(int keycode) {
+			
+			if(keycode == binds.BACK) {
+				// To-Do
+			}
+			
+			main.addKeyInput(keycode);
+		}
+
+		@Override
+		public void keyDepressed(int keycode) {
+			main.removeKeyInput(keycode);
+		}
+
+		@Override
+		public void buttonPressed(int buttoncode) {
+			mouseDown = main.getMouseDown();
+			mouseDown = Utils.vec2unproject(cam, mouseDown);
+			
+			main.addButtonInput(buttoncode);
+		}
+
+		@Override
+		public void buttonDepressed(int buttoncode) {
+			main.removeButtonInput(buttoncode);
+		}
+
+		@Override
+		public void duringPressed(ArrayList<Integer> keyInputs, ArrayList<Integer> buttonInputs) {}
+
+		@Override
+		public void nextMode() {}
+	}
+	
+	private class Generic implements KeyProfile {
+
+		@Override
+		public void keyPressed(int keycode) {
+			
+			if(main.isKeyInputActive(binds.SHIFT)) {
+				if(keycode == binds.ACCEPT) {
+					model.nextPhase();
+				}
+				
+				if(keycode == binds.UNDO) {
+					System.out.println("undo");
+					model.undoAction();
+				}
+			} else {
+				if(keycode == binds.ACCEPT) {
+					view.requestNumberForAction();
+				}
+				
+				if(keycode == binds.UNDO) {
+					model.resetSelection();
+				}
+			}	
+			
+			if(keycode == binds.BACK) {
+				// To-Do
+			}
+			
+			main.addKeyInput(keycode);
+		}
+
+		@Override
+		public void keyDepressed(int keycode) {
+			main.removeKeyInput(keycode);
+		}
+
+		@Override
+		public void buttonPressed(int buttoncode) {
+			
+			mouseDown = main.getMouseDown();
+			mouseDown = Utils.vec2unproject(cam, mouseDown);
+			
+			if(buttoncode == Input.Buttons.LEFT) {
+				for(Country i: model.getStrToCountry().values()) {
+					if(i.getPolyFull().getPolygon().contains(mouseDown)) {
+						model.intoSelection(i);
+					}
+				}
+			}
+			
+			mouseDrag(buttoncode);
+			
+			main.addButtonInput(buttoncode);
+		}
+
+		@Override
+		public void buttonDepressed(int buttoncode) {
+			main.removeButtonInput(buttoncode);
+		}
+
+		@Override
+		public void duringPressed(ArrayList<Integer> keyInputs, ArrayList<Integer> buttonInputs) {
+			defDuringPressed(keyInputs, buttonInputs);
+		}
+
+		@Override
+		public void nextMode() {}
 	}
 }
