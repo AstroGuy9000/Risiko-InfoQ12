@@ -42,7 +42,7 @@ import io.Risiko.CustomWidgets.TextInputWindow.TextInputWindow;
 import io.Risiko.CustomWidgets.TextInputWindow.TextInputWindowListener;
 import io.Risiko.Game.GameMap.CreatorController.CrtKeyProfile;
 import io.Risiko.Game.Menus.MainMenu;
-import io.Risiko.Utils.Utils;
+import io.Risiko.Utils.MiscUtils;
 
 public class CreatorView {
 	
@@ -90,7 +90,7 @@ public class CreatorView {
 		stageUI = main.getStageUI();
 		stageUI.clear();
 		
-		viewport = Utils.makeDefaultViewport();
+		viewport = MiscUtils.makeDefaultViewport();
 		stageMap = new Stage(viewport);
 		cam = (OrthographicCamera) viewport.getCamera();
 		
@@ -116,7 +116,7 @@ public class CreatorView {
 		escMenuGroup.setFillParent(false);
 		escMenuGroup.center();
 		
-		toMenu = new TextButton("Zurueck", skin);
+		toMenu = new TextButton("Main Menu", skin);
 		toMenu.addListener(new ChangeListener() {
 			public void changed (ChangeEvent event, Actor actor) {
 				stageUI.clear();
@@ -212,7 +212,7 @@ public class CreatorView {
 			}});
 		toggleSelectMode.setFillParent(false);
 		
-		addContinent = new TextButton("Kontinent Manager", skin);
+		addContinent = new TextButton("Continent Manager", skin);
 		addContinent.addListener(new ChangeListener() {
 			public void changed (ChangeEvent event, Actor actor) {
 				popupTab.add(new ContinentMaker(skin));
@@ -239,7 +239,7 @@ public class CreatorView {
 		if(backgroundTex.exists()) templateTex = new Texture("mapMaker/template.png");
 		else {
 			Pixmap pixmap = new Pixmap( 1, 1, Format.RGBA8888 );
-			pixmap.setColor(Utils.rgba(154, 157, 161, 1));
+			pixmap.setColor(MiscUtils.rgba(154, 157, 161, 1));
 			pixmap.drawPixel(0, 0);
 			templateTex = new Texture(pixmap);
 		}
@@ -265,12 +265,12 @@ public class CreatorView {
 		
 		if(viewOutline) {
 			for(float[] i: model.getTravel().getDecoLines()) {
-				Utils.drawRoundedLine(main.getShRend(), i, 3.5f, Color.DARK_GRAY);
+				MiscUtils.drawRoundedLine(main.getShRend(), i, 3.5f, Color.DARK_GRAY);
 			}
 		}
 		
 		if(model.getWorkingLineIndex() != -1) {
-			Utils.drawRoundedLine(main.getShRend(), model.getTravel().getDecoLines().get(model.getWorkingLineIndex()), 5, Color.RED);
+			MiscUtils.drawRoundedLine(main.getShRend(), model.getTravel().getDecoLines().get(model.getWorkingLineIndex()), 5, Color.RED);
 		}
 		
 		if(viewCont) {
@@ -322,7 +322,7 @@ public class CreatorView {
 			
 			for(Country i: model.getSelection()) {
 				for(Country x: travel.getMovMap().get(i.getName())) {
-					Utils.drawRoundedLine(
+					MiscUtils.drawRoundedLine(
 							main.getShRend(), 
 							i.getPolyFull().getPolygon().getCentroid(vecTemp1),
 							x.getPolyFull().getPolygon().getCentroid(vecTemp2), 
@@ -357,7 +357,6 @@ public class CreatorView {
 				popupTab.clear();
 				
 				controller.suspendInput(); 
-				System.out.println("suspend: popupTab --> escMenu");
 				
 				backTex = templateTex;
 				
@@ -371,8 +370,6 @@ public class CreatorView {
 		if(escMenu.isVisible()) {
 			escMenu.setVisible(false);
 			
-			System.out.println("resume: escMenu --> goto game");
-			
 			setViewPoly(true);
 			setViewOutline(true);
 			
@@ -381,8 +378,6 @@ public class CreatorView {
 		else {
 			escMenu.setVisible(true);
 			stageUI.setKeyboardFocus(escMenu);
-			
-			System.out.println("suspend: game --> goto escMenu");
 			
 			controller.suspendInput();
 		} 
@@ -547,13 +542,13 @@ public class CreatorView {
 		switch(vertsNumber) {
 			
 		default:
-			Utils.drawPolygonFilled(main.getShRend(), element.getPolyFull(), color);
+			MiscUtils.drawPolygonFilled(main.getShRend(), element.getPolyFull(), color);
 //			Rectangle rect = element.getPolyFull().getBoundingRect();
 //			Utils.drawDebugRect(main.getShRend(), rect, color);
 			break;
 			
 		case 4:		
-			Utils.drawRoundedLine(
+			MiscUtils.drawRoundedLine(
 					main.getShRend(), 
 					
 					element.getVertsList().get(0), 
@@ -588,11 +583,11 @@ public class CreatorView {
 		switch(vertsNumber) {
 			
 		default:
-			Utils.drawPolygonOutline(main.getShRend(), element.getPolyFull(), 4, color);
+			MiscUtils.drawPolygonOutline(main.getShRend(), element.getPolyFull(), 4, color);
 			break;
 			
 		case 4:		
-			Utils.drawRoundedLine(
+			MiscUtils.drawRoundedLine(
 					main.getShRend(), 
 					
 					element.getVertsList().get(0), 
@@ -636,7 +631,7 @@ public class CreatorView {
 				
 			for(Country x: movMap.get(i.getName())) {
 				
-				Utils.drawRoundedLine(
+				MiscUtils.drawRoundedLine(
 							main.getShRend(), 
 							
 						i.getPolyFull().getPolygon().getCentroid(tempVec1),
@@ -686,7 +681,7 @@ public class CreatorView {
 //		private Slider blue;
 		
 		private ContinentMaker(Skin skin) {
-			super("Kontinent", skin);
+			super("Continent Manager", skin);
 			
 			setViewPoly(false);
 			setViewOutline(false);
@@ -712,13 +707,13 @@ public class CreatorView {
 					}
 				}});		
 			
-			newCont = new TextButton("Neuer Kontinent", skin);
+			newCont = new TextButton("New Continent", skin);
 			newCont.addListener(new ChangeListener() {
 				public void changed (ChangeEvent event, Actor actor) {
 					newCurrCont();
 			}});
 			
-			deleteCont = new TextButton("Kontinent entfernen", skin);
+			deleteCont = new TextButton("Remove Continent", skin);
 			deleteCont.addListener(new ChangeListener() {
 				public void changed (ChangeEvent event, Actor actor) {
 					deleteCont();
@@ -799,7 +794,7 @@ public class CreatorView {
 			add(leftSide);
 			add(rightSide);
 			
-			TextButton saveCont = new TextButton("Kontinent speichern", skin);
+			TextButton saveCont = new TextButton("Save Continent", skin);
 			saveCont.addListener(new ChangeListener() {
 				public void changed(ChangeEvent event, Actor actor) {
 					saveToModel();
@@ -823,12 +818,9 @@ public class CreatorView {
  			for(int i = 0; i <  objArr.length; i++) {
  				contsNameArr[i] = (String)objArr[i];
  			}
- 			System.out.println("===");
- 			System.out.println(selectCont.getItems().size);
+ 			
  			selectCont.clearItems();
- 			System.out.println(selectCont.getItems().size);
 			selectCont.setItems(contsNameArr);
-			System.out.println(selectCont.getItems().size);
 			
 			if(selectCont.getItems().contains(selected, false)) {
 				selectCont.setSelected(selected);

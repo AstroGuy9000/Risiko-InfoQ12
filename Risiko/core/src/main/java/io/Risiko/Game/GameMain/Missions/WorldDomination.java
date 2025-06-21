@@ -1,15 +1,12 @@
-package io.Risiko.Game.GameMain;
+package io.Risiko.Game.GameMain.Missions;
 
+import io.Risiko.Game.GameMain.Player;
 import io.Risiko.Game.GameMain.Gameplay.GameplayModel;
 
-public class WordlDomination implements Mission {
+public class WorldDomination extends Mission {
 
-	private GameplayModel model;
-	private Player player;
-	
-	public WordlDomination(GameplayModel modelIn, Player playerIn) {
-		model = modelIn;
-		player = playerIn;
+	public WorldDomination(GameplayModel modelIn, Player playerIn) {
+		super(modelIn, playerIn);
 	}
 	
 	@Override

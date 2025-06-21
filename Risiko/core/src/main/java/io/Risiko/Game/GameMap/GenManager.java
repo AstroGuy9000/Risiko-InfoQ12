@@ -9,7 +9,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
-import io.Risiko.Utils.Utils;
+import io.Risiko.Utils.MiscUtils;
 
 public class GenManager {
 	
@@ -30,7 +30,7 @@ public class GenManager {
 		
 		selection = new ArrayList<Country>();
 		
-		availableContColors = Utils.makeContColors();
+		availableContColors = MiscUtils.makeContColors();
 		
 		workingLineIndex = -1;
 	}

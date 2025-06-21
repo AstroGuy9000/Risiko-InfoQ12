@@ -1,4 +1,4 @@
-package io.Risiko.Game.GameMain.Preparation;
+package io.Risiko.Game.GameMain.GameplayMenus;
 
 import java.util.ArrayList;
 
@@ -22,7 +22,7 @@ import io.Risiko.Game.GameMain.Gameplay.GameplayController;
 import io.Risiko.Game.GameMap.TravelNetwork;
 import io.Risiko.Utils.Controller;
 import io.Risiko.Utils.Menu;
-import io.Risiko.Utils.Utils;
+import io.Risiko.Utils.MiscUtils;
 
 public class AddPlayersMenu extends Menu {
 	
@@ -40,8 +40,12 @@ public class AddPlayersMenu extends Menu {
 	private TextButton nextPlayer;
 	private TextButton toGame;
 	
-	public AddPlayersMenu(Main mainIn, TravelNetwork mapIn) {
+	private final boolean isSecretMission;
+	
+	public AddPlayersMenu(Main mainIn, TravelNetwork mapIn, boolean isSecretMissionIn) {
 		super(mainIn);
+		
+		isSecretMission = isSecretMissionIn;
 		
 		map = mapIn;
 		
@@ -71,7 +75,7 @@ public class AddPlayersMenu extends Menu {
 		enterName.addActor(enterNameLabel);
 		enterName.addActor(enterNameField);
 		
-		nextPlayer = new TextButton("Weiterer Spieler", skin);
+		nextPlayer = new TextButton("Next Player", skin);
 		nextPlayer.addListener(new ChangeListener() {
 			@Override
 			public void changed(ChangeEvent event, Actor actor) {
@@ -97,7 +101,7 @@ public class AddPlayersMenu extends Menu {
 		mainTab.row();
 		mainTab.add(toGame);
 		
-		availablePlayerColors = Utils.makePlayerColors();
+		availablePlayerColors = MiscUtils.makePlayerColors();
 		
 		players = new ArrayList<Player>();
 	}
@@ -144,7 +148,7 @@ public class AddPlayersMenu extends Menu {
 		}
 		players.get(players.size()-1).setNextPlayer(players.get(0));
 		
-		main.setState(new GameplayController(main, map, players));
+		main.setState(new GameplayController(main, map, players, isSecretMission));
 	}
 	
 	private void updateName() {

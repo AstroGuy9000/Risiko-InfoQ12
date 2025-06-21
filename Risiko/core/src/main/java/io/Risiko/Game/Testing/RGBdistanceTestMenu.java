@@ -22,7 +22,7 @@ import io.Risiko.Main;
 import io.Risiko.CustomWidgets.TextFieldCust;
 import io.Risiko.Game.Menus.MainMenu;
 import io.Risiko.Utils.Menu;
-import io.Risiko.Utils.Utils;
+import io.Risiko.Utils.MiscUtils;
 
 public class RGBdistanceTestMenu extends Menu {
 
@@ -70,7 +70,7 @@ public class RGBdistanceTestMenu extends Menu {
 
 			@Override
 			public void thingTyped(char character) {
-				String textClean = Utils.onlyNumsInString(r.getText());
+				String textClean = MiscUtils.onlyNumsInString(r.getText());
 				if(textClean.isBlank()) return;
 				rInt = Integer.valueOf(textClean);
 				r.setText(textClean);
@@ -93,7 +93,7 @@ public class RGBdistanceTestMenu extends Menu {
 
 			@Override
 			public void thingTyped(char character) {
-				String textClean = Utils.onlyNumsInString(g.getText());
+				String textClean = MiscUtils.onlyNumsInString(g.getText());
 				if(textClean.isBlank()) return;
 				gInt = Integer.valueOf(textClean);
 				g.setText(textClean);
@@ -118,7 +118,7 @@ public class RGBdistanceTestMenu extends Menu {
 
 			@Override
 			public void thingTyped(char character) {
-				String textClean = Utils.onlyNumsInString(b.getText());
+				String textClean = MiscUtils.onlyNumsInString(b.getText());
 				if(textClean.isBlank()) return;
 				bInt = Integer.valueOf(textClean);
 				b.setText(textClean);
@@ -141,7 +141,7 @@ public class RGBdistanceTestMenu extends Menu {
 
 			@Override
 			public void thingTyped(char character) {
-				String textClean = Utils.onlyNumsInString(distance.getText());
+				String textClean = MiscUtils.onlyNumsInString(distance.getText());
 				if(textClean.isBlank()) return;
 				distanceInt = Integer.valueOf(textClean);
 				distance.setText(textClean);
@@ -206,7 +206,7 @@ public class RGBdistanceTestMenu extends Menu {
 			if(distanceInt < 0) distanceInt = -distanceInt;
 		}
 		
-		colorPoint = Utils.rgba(rInt, gInt, bInt, 1);
+		colorPoint = MiscUtils.rgba(rInt, gInt, bInt, 1);
 		
 		Pixmap colorMapPoint = new Pixmap( 100, 100, Format.RGBA8888 );
 		colorMapPoint.setColor(colorPoint);
@@ -214,7 +214,7 @@ public class RGBdistanceTestMenu extends Menu {
 		
 		colorPointTex = new Texture(colorMapPoint);
 		
-		colorDistance = Utils.calcColorDistance(colorPoint, distanceInt);
+		colorDistance = MiscUtils.calcColorDistance(colorPoint, distanceInt);
 		
 		Pixmap colorMapDistance = new Pixmap( 100, 100, Format.RGBA8888 );
 		colorMapDistance.setColor(colorDistance);

@@ -14,7 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 //import com.badlogic.gdx.utils.ScreenUtils;
 
 import io.Risiko.Main;
-import io.Risiko.Game.GameMain.Preparation.GameOptionsMenu;
+import io.Risiko.Game.GameMain.GameplayMenus.GameOptionsMenu;
 import io.Risiko.Game.GameMap.CreatorController;
 import io.Risiko.Game.Testing.RGBdistanceTestMenu;
 import io.Risiko.Utils.Controller;
@@ -42,46 +42,46 @@ public class MainMenu extends Menu {
 		stageUI.addActor(creditsTab);
 		creditsTab.setBounds(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
-		title = new Label("Risiko", skin);
+		title = new Label("Risk", skin);
 		title.setFontScale(3);
 
-		credits = new Label("UI von Raymond \"Raeleus\" Buckley", skin, "optional");
+		credits = new Label("UI by Raymond \"Raeleus\" Buckley", skin, "optional");
 		credits.setFontScale(0.5f);
 
-		startGame = new TextButton("Spiel Starten", skin);
+		startGame = new TextButton("PLAY", skin);
 		startGame.addListener(new ChangeListener() {
 			public void changed (ChangeEvent event, Actor actor) {
 				stageUI.clear();
 				main.setState(new GameOptionsMenu(main));
 			}});
 
-		changeBinds = new TextButton("Einstellungen", skin);
+		changeBinds = new TextButton("Settings", skin);
 		changeBinds.addListener(new ChangeListener() {	
 			public void changed (ChangeEvent event, Actor actor) {
 				stageUI.clear();
 				main.setState(new BindsMenu(main));
 			}});
 
-		makeMap =  new TextButton("Karte erstellen", skin);
+		makeMap =  new TextButton("Map Designer", skin);
 		makeMap.addListener(new ChangeListener() {
 			public void changed (ChangeEvent event, Actor actor) {
 				stageUI.clear();
 				main.setState(new CreatorController(main));
 			}});
 
-		quit =  new TextButton("Zum Desktop", skin);
+		quit =  new TextButton("Exit to Desktop", skin);
 		quit.addListener(new ChangeListener() {
 			public void changed (ChangeEvent event, Actor actor) {
 				stageUI.clear();
 				System.exit(0);
 			}});
 		
-		testing =  new TextButton("Test-Zone", skin);
-		testing.addListener(new ChangeListener() {
-			public void changed (ChangeEvent event, Actor actor) {
-				stageUI.clear();
-				main.setState(new RGBdistanceTestMenu(main));
-			}});
+//		testing =  new TextButton("Test-Zone", skin);
+//		testing.addListener(new ChangeListener() {
+//			public void changed (ChangeEvent event, Actor actor) {
+//				stageUI.clear();
+//				main.setState(new RGBdistanceTestMenu(main));
+//			}});
 
 		mainTab.center().add(title).padBottom(60);
 		mainTab.row();
@@ -92,8 +92,8 @@ public class MainMenu extends Menu {
 		mainTab.add(makeMap).padBottom(70);
 		mainTab.row();
 		mainTab.add(quit).padBottom(100);
-		mainTab.row();
-		mainTab.add(testing);
+//		mainTab.row();
+//		mainTab.add(testing);
 
 		creditsTab.pad(25).bottom().left().add(credits);
 	}

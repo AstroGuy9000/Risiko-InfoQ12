@@ -21,7 +21,7 @@ import io.Risiko.Game.GameMap.TravelNetwork;
 import io.Risiko.Utils.BehaviourProfile;
 import io.Risiko.Utils.Controller;
 import io.Risiko.Utils.KeyProfile;
-import io.Risiko.Utils.Utils;
+import io.Risiko.Utils.MiscUtils;
 
 public class GameplayController implements Controller{
 	
@@ -42,12 +42,12 @@ public class GameplayController implements Controller{
 	
 	private KeyProfile profile;
 	
-	public GameplayController(Main mainIn, TravelNetwork map,ArrayList<Player> playersIn) {
+	public GameplayController(Main mainIn, TravelNetwork map,ArrayList<Player> playersIn, boolean isSecretMission) {
 		main = mainIn;
 		
 		binds = main.getBinds();
 		
-		model = new GameplayModel(map, playersIn);
+		model = new GameplayModel(map, playersIn, isSecretMission);
 		view = new GameplayView(this);
 		
 		cam = view.getCam();
@@ -123,10 +123,12 @@ public class GameplayController implements Controller{
 	}
 	
 	public void suspendInput() {
+		if(profile.getClass() == Suspended.class) return;
 		profile = new Suspended();
 	}
 	
 	public void resumeInput() {
+		if(profile.getClass() == Generic.class) return;
 		profile = new Generic();
 	}
 	
@@ -200,7 +202,7 @@ public class GameplayController implements Controller{
 		public void keyPressed(int keycode) {
 			
 			if(keycode == binds.BACK) {
-				// To-Do
+				view.closePopupMenus();
 			}
 			
 			main.addKeyInput(keycode);
@@ -214,7 +216,7 @@ public class GameplayController implements Controller{
 		@Override
 		public void buttonPressed(int buttoncode) {
 			mouseDown = main.getMouseDown();
-			mouseDown = Utils.vec2unproject(cam, mouseDown);
+			mouseDown = MiscUtils.vec2unproject(cam, mouseDown);
 			
 			main.addButtonInput(buttoncode);
 		}
@@ -235,15 +237,19 @@ public class GameplayController implements Controller{
 
 		@Override
 		public void keyPressed(int keycode) {
-			
 			if(main.isKeyInputActive(binds.SHIFT)) {
 				if(keycode == binds.ACCEPT) {
 					model.nextPhase();
 				}
 				
 				if(keycode == binds.UNDO) {
-					System.out.println("undo");
 					model.undoAction();
+				}
+				
+				if(keycode == binds.CYCLE) {
+					for(Country i: model.getStrToCountry().values()) {
+						i.setOccupant(model.getTurnOwner());
+					}
 				}
 			} else {
 				if(keycode == binds.ACCEPT) {
@@ -256,7 +262,15 @@ public class GameplayController implements Controller{
 			}	
 			
 			if(keycode == binds.BACK) {
-				// To-Do
+				view.openPauseMenu();
+			}
+			
+			if(keycode == binds.OUTLINES) {
+				view.openCardMenu();
+			}
+			
+			if(keycode == binds.SHOW_POLY) {
+				view.openContLegend();
 			}
 			
 			main.addKeyInput(keycode);
@@ -271,7 +285,7 @@ public class GameplayController implements Controller{
 		public void buttonPressed(int buttoncode) {
 			
 			mouseDown = main.getMouseDown();
-			mouseDown = Utils.vec2unproject(cam, mouseDown);
+			mouseDown = MiscUtils.vec2unproject(cam, mouseDown);
 			
 			if(buttoncode == Input.Buttons.LEFT) {
 				for(Country i: model.getStrToCountry().values()) {

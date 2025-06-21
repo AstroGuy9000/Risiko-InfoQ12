@@ -6,9 +6,10 @@ import java.util.HashSet;
 
 import com.badlogic.gdx.graphics.Color;
 
+import io.Risiko.Game.GameMain.Missions.Mission;
 import io.Risiko.Game.GameMap.Continent;
 import io.Risiko.Game.GameMap.Country;
-import io.Risiko.Utils.Utils;
+import io.Risiko.Utils.MiscUtils;
 
 public class Player {
 	
@@ -49,6 +50,14 @@ public class Player {
 		return deck;
 	}
 	
+	public void addCard(Card card) {
+		deck.add(card);
+	}
+	
+	public void removeCard(Card card) {
+		deck.remove(card);
+	}
+	
 	public HashSet<Country> getCountries() {
 		return countries;
 	}
@@ -78,6 +87,14 @@ public class Player {
 		return nextPlayer;
 	}
 	
+	public Mission getMission() {
+		return mission;
+	}
+	
+	public void setMission(Mission missionIn) {
+		mission = missionIn;
+	}
+	
 	public HashSet<Continent> getOwnedConts() {
 		return continents;
 	}
@@ -92,7 +109,7 @@ public class Player {
 	
 	public void distributeCountries(ArrayList<Country> toDistribute) {
 		if(toDistribute.isEmpty() || toDistribute == null) return;
-		Country toAdd = toDistribute.get(Utils.getRandomNumber(0, toDistribute.size()-1));
+		Country toAdd = toDistribute.get(MiscUtils.getRandomNumber(0, toDistribute.size()-1));
 		addCountry(toAdd);
 		toDistribute.remove(toAdd);
 		nextPlayer.distributeCountries(toDistribute);

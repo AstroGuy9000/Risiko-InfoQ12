@@ -15,7 +15,7 @@ import io.Risiko.KeyBinds;
 import io.Risiko.Main;
 import io.Risiko.Utils.Controller;
 import io.Risiko.Utils.KeyProfile;
-import io.Risiko.Utils.Utils;
+import io.Risiko.Utils.MiscUtils;
 
 public class CreatorController implements Controller {
 	
@@ -458,7 +458,7 @@ public class CreatorController implements Controller {
 		public void buttonPressed(int buttoncode) {
 
 			mouseDown = main.getMouseDown();
-			mouseDown = Utils.vec2unproject(cam, mouseDown);
+			mouseDown = MiscUtils.vec2unproject(cam, mouseDown);
 		
 			
 			if(buttoncode == Input.Buttons.LEFT) {
@@ -530,7 +530,7 @@ public class CreatorController implements Controller {
 		public void buttonPressed(int buttoncode) {
 			
 			mouseDown = main.getMouseDown();
-			mouseDown = Utils.vec2unproject(cam, mouseDown);
+			mouseDown = MiscUtils.vec2unproject(cam, mouseDown);
 			
 			if(main.isKeyInputActive(binds.SHIFT)) {
 				if(buttoncode == Input.Buttons.LEFT) {
@@ -631,7 +631,7 @@ public class CreatorController implements Controller {
 			ArrayList<Country> selection = model.getSelection();
 			
 			mouseDown = main.getMouseDown();
-			mouseDown = Utils.vec2unproject(cam, mouseDown);
+			mouseDown = MiscUtils.vec2unproject(cam, mouseDown);
 			
 			if(!main.isKeyInputActive(binds.SHIFT)) {
 				if(buttoncode == Input.Buttons.LEFT) {
@@ -662,7 +662,7 @@ public class CreatorController implements Controller {
 		public void buttonDepressed(int buttoncode) {
 			
 			if(mouseDownPerm != null && buttoncode == Input.Buttons.LEFT) {
-				Vector2 mouseUp = Utils.vec2unproject(cam, new Vector2(Gdx.input.getX(), Gdx.input.getY()));;
+				Vector2 mouseUp = MiscUtils.vec2unproject(cam, new Vector2(Gdx.input.getX(), Gdx.input.getY()));;
 				
 				model.addLine(mouseDownPerm, mouseUp);
 				mouseDownPerm = null;

@@ -15,12 +15,20 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport;
 
 import io.Risiko.Main;
 
-public class Utils {
+public class MiscUtils {
 	
-	private Utils() {};
+	private MiscUtils() {};
 	
 	static public String onlyNumsInString(String text) {
 		return text.replaceAll("[^0-9.]", "");
+	}
+	
+	static public String spacingString(int n) {
+		String space = "";
+		for(int i = 0; i < n; i++) {
+			space = space + " ";
+		}
+		return space;
 	}
 	
 	// https://www.baeldung.com/java-generating-random-numbers-in-range
@@ -174,9 +182,9 @@ public class Utils {
 		float pointG = point.g*255;
 		float pointB = point.b*255;
 		
-		float a = 1 + ( Utils.square(pointG/pointR) ) + ( Utils.square(pointB/pointR) );
-		float b = -2*(pointR + ( (Utils.square(pointG))/pointR ) + ( (Utils.square(pointB))/pointR ));
-		float c = Utils.square(pointR) + Utils.square(pointG) + Utils.square(pointB) - Utils.square( (float) (Math.sqrt(Utils.square(pointR) + Utils.square(pointG) + Utils.square(pointB)) + dist));
+		float a = 1 + ( MiscUtils.square(pointG/pointR) ) + ( MiscUtils.square(pointB/pointR) );
+		float b = -2*(pointR + ( (MiscUtils.square(pointG))/pointR ) + ( (MiscUtils.square(pointB))/pointR ));
+		float c = MiscUtils.square(pointR) + MiscUtils.square(pointG) + MiscUtils.square(pointB) - MiscUtils.square( (float) (Math.sqrt(MiscUtils.square(pointR) + MiscUtils.square(pointG) + MiscUtils.square(pointB)) + dist));
 		
 		float calc = (float) ( (-1*b + Math.sqrt( b*b - (4 * a * c) )) / (2 * a) );
 		
@@ -184,7 +192,7 @@ public class Utils {
 		int calcG = (int) (( calc*(pointG/pointR) ) - pointG);
 		int calcB = (int) (( calc*(pointB/pointR) ) - pointB);
 		
-		Color calcColor = Utils.rgba(calcR, calcG, calcB, 1);
+		Color calcColor = MiscUtils.rgba(calcR, calcG, calcB, 1);
 		
 		return calcColor;
 	}
@@ -192,16 +200,16 @@ public class Utils {
 	static public ArrayList<Color> makeContColors() {
 		ArrayList<Color> contColorsList = new ArrayList<Color>();
 		
-		contColorsList.add(Utils.rgba(150, 6, 6, 1));		//Dunkelrot
-		contColorsList.add(Utils.rgba(12, 92, 24, 1));		//Dunkelgrün
-		contColorsList.add(Utils.rgba(19, 45, 148, 1));		//Dunkelblau
-		contColorsList.add(Utils.rgba(99, 6, 120, 1));		//Lila
-		contColorsList.add(Utils.rgba(156, 36, 123, 1));	//(Dunkeles Pink oder KA was der Name ist)
-		contColorsList.add(Utils.rgba(18, 137, 124, 1));	//Dunkeles Teal
-		contColorsList.add(Utils.rgba(155, 132, 26, 1));	//Dunkeles Gelb
-		contColorsList.add(Utils.rgba(87, 132, 17, 1));		//Dunkeles Gelb/Grün
-		contColorsList.add(Utils.rgba(178, 110, 18, 1));	//Dunkeles Orange
-		contColorsList.add(Utils.rgba(128, 21, 139, 1));	//Dunkeles Semi-Lila
+		contColorsList.add(MiscUtils.rgba(150, 6, 6, 1));		//Dunkelrot
+		contColorsList.add(MiscUtils.rgba(12, 92, 24, 1));		//Dunkelgrün
+		contColorsList.add(MiscUtils.rgba(19, 45, 148, 1));		//Dunkelblau
+		contColorsList.add(MiscUtils.rgba(99, 6, 120, 1));		//Lila
+		contColorsList.add(MiscUtils.rgba(156, 36, 123, 1));	//(Dunkeles Pink oder KA was der Name ist)
+		contColorsList.add(MiscUtils.rgba(18, 137, 124, 1));	//Dunkeles Teal
+		contColorsList.add(MiscUtils.rgba(155, 132, 26, 1));	//Dunkeles Gelb
+		contColorsList.add(MiscUtils.rgba(87, 132, 17, 1));		//Dunkeles Gelb/Grün
+		contColorsList.add(MiscUtils.rgba(178, 110, 18, 1));	//Dunkeles Orange
+		contColorsList.add(MiscUtils.rgba(128, 21, 139, 1));	//Dunkeles Semi-Lila
 		
 		return contColorsList;
 	}

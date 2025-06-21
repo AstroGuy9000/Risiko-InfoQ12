@@ -1,4 +1,4 @@
-package io.Risiko.Game.GameMain.Preparation;
+package io.Risiko.Game.GameMain.GameplayMenus;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -16,6 +16,7 @@ import io.Risiko.Main;
 import io.Risiko.CustomWidgets.ListCust;
 import io.Risiko.CustomWidgets.FileMenu.FileMenu;
 import io.Risiko.CustomWidgets.FileMenu.FileMenuListener;
+import io.Risiko.Game.GameMain.Missions.Mission;
 import io.Risiko.Game.GameMap.Country;
 import io.Risiko.Game.GameMap.TravelNetwork;
 import io.Risiko.Game.GameMap.TravelNetworkSave;
@@ -26,12 +27,14 @@ public class GameOptionsMenu extends Menu {
 	
 	private TextButton openMapSelection;
 	private Label selectedMapName;
-	private TextButton selectGameMode;	// muss noch implementieren
-	private TextButton toAddPlayers;	// muss noch implementieren
+	private TextButton selectGameMode;	
+	private TextButton toAddPlayers;	
 	private TextButton toMenu;
 	
 	private TravelNetwork selectedMap;
 	private boolean mapIsPlayable;
+	
+	private boolean isSecretMission;
 
 	public GameOptionsMenu(Main mainIn) {
 		super(mainIn);
@@ -59,14 +62,28 @@ public class GameOptionsMenu extends Menu {
 		
 		// muss noch Auswahl des Spielmodus implementieren
 		
+		isSecretMission = false;
+		selectGameMode = new TextButton("-   Standard   -", skin);
+		selectGameMode.addListener(new ChangeListener() {
+			@Override
+			public void changed(ChangeEvent event, Actor actor) {
+				if(isSecretMission) {
+					isSecretMission = false;
+					selectGameMode.setText("-   Standard   -");
+				} else {
+					isSecretMission = true;
+					selectGameMode.setText("-Secret Mission-");
+				}
+			}});	
+		
 		toAddPlayers = new TextButton("next", skin);
 		toAddPlayers.addListener(new ChangeListener() {
 			@Override
 			public void changed(ChangeEvent event, Actor actor) {
-				if(mapIsPlayable) main.setState(new AddPlayersMenu(main, selectedMap));
+				if(mapIsPlayable) main.setState(new AddPlayersMenu(main, selectedMap, isSecretMission));
 			}});	
 		
-		toMenu = new TextButton("Zum Menu", skin);
+		toMenu = new TextButton("Main Menu", skin);
 		toMenu.addListener(new ChangeListener() {
 			@Override
 			public void changed(ChangeEvent event, Actor actor) {
@@ -75,7 +92,9 @@ public class GameOptionsMenu extends Menu {
 		
 		mainTab.add(openMapSelection).padBottom(5);
 		mainTab.row();
-		mainTab.add(selectedMapName).padBottom(15);
+		mainTab.add(selectedMapName).padBottom(20);
+		mainTab.row();
+		mainTab.add(selectGameMode).padBottom(15);
 		mainTab.row();
 		mainTab.add(toAddPlayers).padBottom(20);
 		mainTab.row();
@@ -96,7 +115,7 @@ public class GameOptionsMenu extends Menu {
 	
 	private boolean isMapDone() {
 		
-		if(selectedMap.getStrToCountry().values().toArray().length <= 0) return false;
+		if(selectedMap.getStrToCountry().values().size() < 30) return false;
 		
 		Object[] tempCountryArr = selectedMap.getStrToCountry().values().toArray();
 		ArrayList<Country> countries = new ArrayList<Country>();

@@ -46,7 +46,7 @@ public class BindsMenu extends Menu {
 		
 		unassignedCounter = 0;
 		
-		title = new Label("Einstellungen", skin);
+		title = new Label("Settings", skin);
 		title.setFontScale(2);
 		
 		nameList = new ListCust<String>(skin, "dimmed", main.getBinds());
@@ -97,7 +97,7 @@ public class BindsMenu extends Menu {
 		
 		stageUI.setKeyboardFocus(bindsList);
 		
-		saveChanges = new TextButton("Einstellungen speichern", skin);
+		saveChanges = new TextButton("Save Settings", skin);
 		saveChanges.addListener(new ChangeListener() {
 			public void changed (ChangeEvent event, Actor actor) {
 				if(checkBinds()) {
@@ -118,7 +118,7 @@ public class BindsMenu extends Menu {
 				updateListContent();
 			}});
 		
-		toMenu = new TextButton("Zurueck", skin);
+		toMenu = new TextButton("Main Menu", skin);
 		toMenu.addListener(new ChangeListener() {
 			public void changed (ChangeEvent event, Actor actor) {
 				stageUI.clear();
@@ -136,7 +136,7 @@ public class BindsMenu extends Menu {
 		mainTab.add(toMenu);
 		
 		notif = new Window("", skin, "dialog");
-		notif.add(new Label("Warte aud neue Taste", skin, "optional")).pad(20).padTop(10);
+		notif.add(new Label("Waiting for Input", skin, "optional")).pad(20).padTop(10);
 		
 		//stageUI.setDebugAll(true);
 	}
@@ -145,10 +145,8 @@ public class BindsMenu extends Menu {
 	public void keyPressed(int keycode) {
 		if(isListening) {
 			if(keycode == Keys.BACKSPACE) {
-				System.out.println("unassign key");
 				if(whoIsListening == 4) {	// bindsKeysArr[4] --> Accept
 					main.addKeyInput(keycode);
-					System.out.println("nuh uh");
 					setListening(false);
 					popupTab.clear();
 					return;

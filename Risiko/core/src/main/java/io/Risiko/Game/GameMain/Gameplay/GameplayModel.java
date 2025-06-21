@@ -9,13 +9,19 @@ import com.badlogic.gdx.math.MathUtils;
 
 import io.Risiko.Game.GameMain.Card;
 import io.Risiko.Game.GameMain.Player;
-import io.Risiko.Game.GameMain.Card.CardType;
+import io.Risiko.Game.GameMain.Card.Card_Type;
+import io.Risiko.Game.GameMain.Missions.Assassination;
+import io.Risiko.Game.GameMain.Missions.CaptureCont;
+import io.Risiko.Game.GameMain.Missions.CaptureTwelve;
+import io.Risiko.Game.GameMain.Missions.MissionUtils;
+import io.Risiko.Game.GameMain.Missions.MissionUtils.SecretMission;
+import io.Risiko.Game.GameMain.Missions.WorldDomination;
 import io.Risiko.Game.GameMap.Continent;
 import io.Risiko.Game.GameMap.Country;
 import io.Risiko.Game.GameMap.TravelNetwork;
 import io.Risiko.Utils.RiskListener;
 import io.Risiko.Utils.RiskListenerGroup;
-import io.Risiko.Utils.Utils;
+import io.Risiko.Utils.MiscUtils;
 
 public class GameplayModel extends TravelNetwork {
 	
@@ -31,8 +37,46 @@ public class GameplayModel extends TravelNetwork {
 	
 	private RiskListenerGroup turnListeners;
 
-	public GameplayModel(TravelNetwork travel, ArrayList<Player> playersIn) {
+	public GameplayModel(TravelNetwork travel, ArrayList<Player> playersIn, boolean isSecretMission) {
 		super(travel);
+		
+		players = playersIn;
+		
+		for(Player i:  players) {
+			i.setPlayerDeck(new HashSet<Card>());
+		}
+		
+		if(isSecretMission) {
+			for(Player i:  players) {
+				switch(MissionUtils.getRandomSecretMission()) {
+				
+				default:
+					System.out.println("Default in SecretMission switch statement");
+					i.setMission(new CaptureTwelve(this, i));
+					break;
+					
+				case SecretMission.CaptureCont:
+					i.setMission(new CaptureCont(this, i));
+					break;
+					
+				case SecretMission.CaptureTwelve:
+					i.setMission(new CaptureTwelve(this, i));
+					break;
+					
+				case SecretMission.CaptureTwentyfour:
+					i.setMission(new CaptureTwelve(this, i));
+					break;
+					
+				case SecretMission.Assassination:
+					i.setMission(new Assassination(this, i));
+					break;
+				}
+			}
+		} else {
+			for(Player i:  players) {
+				i.setMission(new WorldDomination(this, i));
+			}
+		}
 		
 		ArrayList<Country> countries = new ArrayList<Country>(getStrToCountry().values());
 		
@@ -45,20 +89,20 @@ public class GameplayModel extends TravelNetwork {
 		cardBank = new ArrayList<Card>();
 		
 		for(int i = 0; i < infantry; i++) {
-			Country country = countries.get(Utils.getRandomNumber(0, countries.size()));
-			new Card(CardType.Infantry, country, cardBank);
+			Country country = countries.get(MiscUtils.getRandomNumber(0, countries.size()));
+			new Card(Card_Type.Infantry, country, cardBank);
 			countries.remove(country);
 		}
 		
 		for(int i = 0; i < cavalry; i++) {
-			Country country = countries.get(Utils.getRandomNumber(0, countries.size()));
-			new Card(CardType.Cavalry, country, cardBank);
+			Country country = countries.get(MiscUtils.getRandomNumber(0, countries.size()));
+			new Card(Card_Type.Cavalry, country, cardBank);
 			countries.remove(country);
 		}
 		
 		for(int i = 0; i < cavalry; i++) {
-			Country country = countries.get(Utils.getRandomNumber(0, countries.size()));
-			new Card(CardType.Artillery, country, cardBank);
+			Country country = countries.get(MiscUtils.getRandomNumber(0, countries.size()));
+			new Card(Card_Type.Artillery, country, cardBank);
 			countries.remove(country);
 		}
 		
@@ -69,12 +113,6 @@ public class GameplayModel extends TravelNetwork {
 		
 		cardLevel = 0;
 		
-		players = playersIn;
-		
-		for(Player i:  players) {
-			i.setPlayerDeck(new HashSet<Card>());
-		}
-		
 		turnListeners = new RiskListenerGroup();
 		
 		selection = new ArrayList<Country>();
@@ -82,8 +120,8 @@ public class GameplayModel extends TravelNetwork {
 		gamePhase = new GameStartup(players.getLast());
 	}
 	
-	public ArrayList<Player> getPlayers() {
-		return players;
+	public ArrayList<Player> getPlayersCopy() {
+		return new ArrayList<Player>(players);
 	}
 	
 	public ArrayList<Country> getSelection() {
@@ -186,17 +224,17 @@ public class GameplayModel extends TravelNetwork {
 		
 		if(cards.size() != 3) return false;
 		
-		ArrayList<CardType> cardTypesTemp = new ArrayList<CardType>();
-		cardTypesTemp.add(CardType.Infantry);
-		cardTypesTemp.add(CardType.Cavalry);
-		cardTypesTemp.add(CardType.Artillery);
+		ArrayList<Card_Type> cardTypesTemp = new ArrayList<Card_Type>();
+		cardTypesTemp.add(Card_Type.Infantry);
+		cardTypesTemp.add(Card_Type.Cavalry);
+		cardTypesTemp.add(Card_Type.Artillery);
 		
-		for(CardType i: cardTypesTemp) {
+		for(Card_Type i: cardTypesTemp) {
 			
 			int counter = 0;
 			
 			for(Card x: cards) {
-				if(x.getCardType() != i && x.getCardType() != CardType.Joker) {
+				if(x.getCardType() != i && x.getCardType() != Card_Type.Joker) {
 					break;
 				} 
 				counter++;
@@ -224,6 +262,14 @@ public class GameplayModel extends TravelNetwork {
 		
 		return false;
 	}
+	
+	private Card pullCard() {
+		if(cardBank.isEmpty()) return null;
+		
+		Card card = cardBank.get(MiscUtils.getRandomNumber(0, cardBank.size()-1));
+		cardBank.remove(card);
+		return card;
+	} 
 	
 	protected abstract class Phase {
 		protected Player owner;
@@ -305,8 +351,8 @@ public class GameplayModel extends TravelNetwork {
 		
 		int counter;
 		
-		private GameStartup(Player first) {
-			super(new Phase(first) {
+		private GameStartup(Player last) {
+			super(new Phase(last) {
 				@Override
 				protected void intoSelection(Country country) {}
 				@Override
@@ -365,6 +411,14 @@ public class GameplayModel extends TravelNetwork {
 			
 			System.out.println("Phase: Setup");
 			
+			
+			int limit = 0;
+			while(owner.getNextPlayer().getCountries().isEmpty()) {
+				owner = owner.getNextPlayer();
+				limit ++;
+				if(limit > 100) break;
+			}
+			
 			setOwner(owner.getNextPlayer());
 			
 			turnListeners.thingHappened();
@@ -377,6 +431,7 @@ public class GameplayModel extends TravelNetwork {
 			refreshContinentOwnership(owner);
 			for(Continent i: owner.getOwnedConts()) {
 				toSpendTroops = toSpendTroops + i.getBonus();
+				System.out.println(owner.getName() + " recerived a troop bonus of " + i.getBonus() + " for owning the Continent " + i.getName());
 			}
 		}
 		
@@ -420,10 +475,9 @@ public class GameplayModel extends TravelNetwork {
 				exchangedCards = cards;
 				gainedTroops = 0;
 				
-				addAction(ExchangeCards.this);
-				
 				if(!canTradeCards(cards)) {
 					exchangedCards = new ArrayList<Card>();
+					addAction(ExchangeCards.this);
 					return;
 				}
 					
@@ -441,6 +495,8 @@ public class GameplayModel extends TravelNetwork {
 				toSpendTroops += gainedTroops;
 				owner.getDeck().removeAll(cards);
 				cardBank.addAll(cards);
+				
+				addAction(ExchangeCards.this);
 			}
 
 			@Override
@@ -472,7 +528,7 @@ public class GameplayModel extends TravelNetwork {
 		}
 		
 		public void exchangeCards(ArrayList<Card> cards) {
-			
+			new ExchangeCards(cards);
 		}
 
 		@Override
@@ -533,13 +589,13 @@ public class GameplayModel extends TravelNetwork {
 				
 				int[] attackRolls = new int[troops];
 				for(int i = 0; i < troops; i++) {
-					attackRolls[i] = Utils.d6();
+					attackRolls[i] = MiscUtils.d6();
 				}
 				Arrays.sort(attackRolls);
 				
 				int[] defendRolls = new int[defenders];
 				for(int i = 0; i < defenders; i++) {
-					defendRolls[i] = Utils.d6();
+					defendRolls[i] = MiscUtils.d6();
 				}
 				Arrays.sort(defendRolls);
 				
@@ -557,14 +613,21 @@ public class GameplayModel extends TravelNetwork {
 				
 				if(target.getTroops() <= 0) {
 					System.out.println(owner.getName() + " has conquered " + target.getName() + " from " + start.getName());
+					
+					Card pulledCard = pullCard();
+					if(pulledCard != null) start.getOccupant().addCard(pulledCard);
+					
 					conquered = new GameAction() {
 
 						private int troopsToCountry = troops-lossAttack;
 						private String previousOwnerName = target.getOccupant().getName();
+						private Card pulledCardAction = pulledCard;
 						
 						public boolean undoAction() {
 							
 							Player previousOwner = null;
+							
+							if(pulledCard != null) start.getOccupant().removeCard(pulledCardAction);
 							
 							for(Player i: players) {
 								if(i.getName().equals(previousOwnerName)) {
@@ -815,20 +878,5 @@ public class GameplayModel extends TravelNetwork {
 		ATTACK,
 		FORTIFY,
 		MISC
-	}
-	
-	private class CardManager {
-
-		private final ArrayList<Card> allCards;
-		private ArrayList<Card> cardBank;
-		private HashMap<Player, HashSet<Card>> playerDecks;
-		private int cardLevel;
-		
-		public CardManager() {
-			
-
-			
-			allCards = new ArrayList<Card>(cardBank);
-		}
 	}
 }

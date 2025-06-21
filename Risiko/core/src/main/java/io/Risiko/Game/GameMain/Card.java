@@ -7,12 +7,12 @@ import io.Risiko.Game.GameMap.Country;
 
 public class Card {
 	
-	private CardType type;
+	private Card_Type type;
 	private Country country;
 	private final ArrayList<Card> ownerSet;
 	private int cardID;
 	
-	public Card(CardType typeIn, Country countryIn, ArrayList<Card> ownerSetIn) {
+	public Card(Card_Type typeIn, Country countryIn, ArrayList<Card> ownerSetIn) {
 		type = typeIn;
 		country = countryIn;
 		ownerSet = ownerSetIn;
@@ -22,14 +22,14 @@ public class Card {
 
 	// nur für Joker
 	public Card(ArrayList<Card> ownerSetIn) {
-		type = CardType.Joker;
+		type = Card_Type.Joker;
 		country = null;
 		ownerSet = ownerSetIn;
 		cardID = ownerSetIn.size();
 		ownerSetIn.add(this);
 	}
 	
-	public CardType getCardType() {
+	public Card_Type getCardType() {
 		return type;
 	}
 	
@@ -41,7 +41,7 @@ public class Card {
 		return ownerSet;
 	}
 	
-	public enum CardType {
+	public enum Card_Type {
 		Infantry,
 		Cavalry,
 		Artillery,
