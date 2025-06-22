@@ -239,7 +239,7 @@ public class CreatorView {
 		if(backgroundTex.exists()) templateTex = new Texture("mapMaker/template.png");
 		else {
 			Pixmap pixmap = new Pixmap( 1, 1, Format.RGBA8888 );
-			pixmap.setColor(MiscUtils.rgba(154, 157, 161, 1));
+			pixmap.setColor(MiscUtils.rgba(190, 190, 190, 1));
 			pixmap.drawPixel(0, 0);
 			templateTex = new Texture(pixmap);
 		}
@@ -279,8 +279,8 @@ public class CreatorView {
 				Color contColor = cont.getColor();
 				
 				for(Country x: model.getTravel().getContMembers().get(i)) {
-					drawElementOutline(x, contColor);
-					drawElementPoly(x, contColor);
+					drawCountryOutline(x, contColor);
+					drawCountryPoly(x, contColor);
 				}
 			}
 			
@@ -294,21 +294,21 @@ public class CreatorView {
 		
 		if(viewPoly) {
 			for(Country i: model.getCountries()) {
-				drawElementPoly(i, Color.RED);
+				drawCountryPoly(i, Color.RED);
 			}
 			
 			for(Country i: model.getSelection()) {
-				drawElementPoly(i, Color.YELLOW);
+				drawCountryPoly(i, Color.YELLOW);
 			}
 		}
 		
 		if(viewOutline) {		
 			for(Country i: model.getCountries()) {
-				drawElementOutline(i, Color.FIREBRICK);
+				drawCountryOutline(i, Color.FIREBRICK);
 			}
 			
 			for(Country i: model.getSelection()) {
-				drawElementOutline(i, Color.GOLD);
+				drawCountryOutline(i, Color.GOLD);
 			}
 		}
 		
@@ -333,8 +333,8 @@ public class CreatorView {
 			}
 		}
 		
-		if(viewPoly) drawElementPoly(model.getWorkingCountry(), Color.GREEN);
-		if(viewOutline) drawElementOutline(model.getWorkingCountry(), Color.FOREST);
+		if(viewPoly) drawCountryPoly(model.getWorkingCountry(), Color.GREEN);
+		if(viewOutline) drawCountryOutline(model.getWorkingCountry(), Color.FOREST);
 		
 		main.getShRend().end();
 		
@@ -524,7 +524,7 @@ public class CreatorView {
 			break;
 			
 		case CrtKeyProfile.SELECT:
-			toggleSelectMode.setLabel(new Label("Mode:  Select Element", skin));
+			toggleSelectMode.setLabel(new Label("Mode:  Select Country", skin));
 			break;
 			
 		case CrtKeyProfile.CONNECTION:
@@ -533,13 +533,13 @@ public class CreatorView {
 	}
 	}
 	
-	private void drawElementPoly(Country element, Color color) {
-		int vertsNumber = element.getVertsList().size();
+	private void drawCountryPoly(Country country, Color color) {
+		int vertsNumber = country.getVertsList().size();
 		
 		switch(vertsNumber) {
 			
 		default:
-			MiscUtils.drawPolygonFilled(main.getShRend(), element.getPolyFull(), color);
+			MiscUtils.drawPolygonFilled(main.getShRend(), country.getPolyFull(), color);
 //			Rectangle rect = element.getPolyFull().getBoundingRect();
 //			Utils.drawDebugRect(main.getShRend(), rect, color);
 			break;
@@ -548,11 +548,11 @@ public class CreatorView {
 			MiscUtils.drawRoundedLine(
 					main.getShRend(), 
 					
-					element.getVertsList().get(0), 
-					element.getVertsList().get(1), 
+					country.getVertsList().get(0), 
+					country.getVertsList().get(1), 
 					
-					element.getVertsList().get(2), 
-					element.getVertsList().get(3), 
+					country.getVertsList().get(2), 
+					country.getVertsList().get(3), 
 					
 					2, 
 					color);
@@ -562,8 +562,8 @@ public class CreatorView {
 			main.getShRend().setColor(color);
 			
 			main.getShRend().circle(
-					element.getVertsList().get(0), 
-					element.getVertsList().get(1), 
+					country.getVertsList().get(0), 
+					country.getVertsList().get(1), 
 					
 					1f, 
 					50);
@@ -574,24 +574,24 @@ public class CreatorView {
 		}
 	}
 	
-	private void drawElementOutline(Country element, Color color) {
-		int vertsNumber = element.getVertsList().size();
+	private void drawCountryOutline(Country country, Color color) {
+		int vertsNumber = country.getVertsList().size();
 		
 		switch(vertsNumber) {
 			
 		default:
-			MiscUtils.drawPolygonOutline(main.getShRend(), element.getPolyFull(), 4, color);
+			MiscUtils.drawPolygonOutline(main.getShRend(), country.getPolyFull(), 4, color);
 			break;
 			
 		case 4:		
 			MiscUtils.drawRoundedLine(
 					main.getShRend(), 
 					
-					element.getVertsList().get(0), 
-					element.getVertsList().get(1), 
+					country.getVertsList().get(0), 
+					country.getVertsList().get(1), 
 					
-					element.getVertsList().get(2), 
-					element.getVertsList().get(3), 
+					country.getVertsList().get(2), 
+					country.getVertsList().get(3), 
 					
 					4, 
 					color);
@@ -601,8 +601,8 @@ public class CreatorView {
 			main.getShRend().setColor(color);
 			
 			main.getShRend().circle(
-					element.getVertsList().get(0), 
-					element.getVertsList().get(1), 
+					country.getVertsList().get(0), 
+					country.getVertsList().get(1), 
 					
 					2, 
 					50);

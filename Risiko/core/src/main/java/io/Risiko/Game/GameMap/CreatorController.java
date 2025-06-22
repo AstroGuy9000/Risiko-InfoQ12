@@ -429,7 +429,7 @@ public class CreatorController implements Controller {
 				}
 			}
 			
-			if(keycode == binds.FUNC2) {
+			if(keycode == binds.FUNC1 || keycode == binds.FUNC2) {
 				view.toggleViewCont();
 			}
 			
@@ -629,6 +629,7 @@ public class CreatorController implements Controller {
 			
 			if(!main.isKeyInputActive(binds.SHIFT)) {
 				if(buttoncode == Input.Buttons.LEFT) {
+					model.setWorkingLineIndex(-1);
 					for(Country i: model.getCountries()) {
 						if(i.isDrawReady() && i.getPolyFull().getPolygon().contains(mouseDown)) {
 							if(selection.contains(i)) {

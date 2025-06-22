@@ -28,6 +28,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 
@@ -317,14 +318,26 @@ public class GameplayView {
 			//HorizontalGroup horGroup = new HorizontalGroup();
 			VerticalGroup selectedCardsGroup = new VerticalGroup();
 			
+			TextButton tradeCards = new TextButton("Trade Cards", skin);
+			tradeCards.setVisible(false);
+			
 			ListCust<String> selectedCardsList = new ListCust<String>(skin, main.getBinds());
 			selectedCardsList.setItems(new String[0]);
 			selectedCardsList.addListener(new ChangeListener() {
 				@Override
 				public void changed(ChangeEvent event, Actor actor) {
 					selectedCardsList.setSelectedIndex(-1);
+					
+					Array<String> items = selectedCardsList.getItems();
+					ArrayList<Card> temp = new ArrayList<Card>();
+					for(int i = 0; i < items.size; i++) {
+						temp.add(strToCard.get(items.get(i)));
+					}
+					
+					if(model.canTradeCards(temp) && model.getPhaseObject().getClass() == SetupPhase.class) tradeCards.setVisible(true);
+					else tradeCards.setVisible(false);
 				}});
-			TextButton tradeCards = new TextButton("Trade Cards", skin);
+
 			tradeCards.addListener(new ChangeListener() {
 				@Override
 				public void changed(ChangeEvent event, Actor actor) {

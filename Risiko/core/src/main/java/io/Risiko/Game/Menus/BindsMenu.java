@@ -136,6 +136,8 @@ public class BindsMenu extends Menu {
 		mainTab.add(toMenu);
 		
 		notif = new Window("", skin, "dialog");
+		notif.setFillParent(true);
+		notif.setMovable(false);
 		notif.add(new Label("Waiting for Input", skin, "optional")).pad(20).padTop(10);
 		
 		//stageUI.setDebugAll(true);

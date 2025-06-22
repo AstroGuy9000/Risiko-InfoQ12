@@ -237,6 +237,11 @@ public class GameplayController implements Controller{
 
 		@Override
 		public void keyPressed(int keycode) {
+			
+			if(keycode == binds.CYCLE) {
+				model.nextPhase();
+			}
+			
 			if(main.isKeyInputActive(binds.SHIFT)) {
 				if(keycode == binds.ACCEPT) {
 					model.nextPhase();
