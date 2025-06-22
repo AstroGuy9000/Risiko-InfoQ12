@@ -44,7 +44,7 @@ Map Designer Controls:
   - <SHIFT> + <UNDO> clears the selection
   - <ACCEPT> toggles the connection between the selected countries if the selection is valid
   - <SHIFT> + <ACCEPT> creates automatic connections
-  - <LEFT CLICK> + <MOUSE DRAG> creates a cosmetic line from the start position to the end position of the mouse
+  - <SHIFT> + <LEFT CLICK> + <MOUSE DRAG> creates a cosmetic line from the start position to the end position of the mouse
   - <CYCLE> cycles the selected cosmetic line
   - <UNDO> removes a cosmetic line if one is selected
 - Select Country:
@@ -98,13 +98,13 @@ Map Designer Steuerung:
   - <FUNCTION 1> schaltet die Sichtbarkeit des Polygon-Körpers um
   - <FUNCTION 2> schaltet die Sichtbarkeit des Umrisses des Polygon um
 - Edit Connections:
-  - <LEFT CLICK> adds/removes the clicked country to the selection
-  - <SHIFT> + <UNDO> clears the selection
-  - <ACCEPT> toggles the connection between the selected countries if the selection is valid
-  - <SHIFT> + <ACCEPT> creates automatic connections
-  - <LEFT CLICK> + <MOUSE DRAG> creates a cosmetic line from the start position to the end position of the mouse
-  - <CYCLE> cycles the selected cosmetic line
-  - <UNDO> removes a cosmetic line if one is selected
+  - <LEFT CLICK> fügt ein Land zur Auswahl hinzu bzw. entfernt ein Land
+  - <SHIFT> + <UNDO> enfernt alles aus der Auswahl
+  - <ACCEPT> schaltet die Verbindung zwischen zwei Ländern falls die Auswahl gültig ist
+  - <SHIFT> + <ACCEPT> schafft automatisch Verbindungen
+  - <SHIFT> + <LEFT CLICK> + <MOUSE DRAG> schafft eine kosmetische Linie vom Startpunkt zum Endpunkt des Mausbewegung
+  - <CYCLE> durchläuft die Auswahl der kosmetischen Linie
+  - <UNDO> entfernt die ausgewählte kosmetische Linie
 - Select Country:
   - <LEFT CLICK> fügt das geklickte Land der Auswahl hinzu bzw. entfernt diese aus der Auswahl
   - <SHIFT> + <LEFT CLICK> öffnet das Eingabefenster zur Benennung des geklickten Landes
