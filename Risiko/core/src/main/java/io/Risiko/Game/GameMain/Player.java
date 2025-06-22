@@ -106,7 +106,7 @@ public class Player {
 	}
 	
 	public void distributeCountries(ArrayList<Country> toDistribute) {
-		if(toDistribute.isEmpty() || toDistribute == null) return;
+		if(toDistribute.size() <= 0 || toDistribute.isEmpty() ||toDistribute == null) return;
 		Country toAdd = toDistribute.get(MiscUtils.getRandomNumber(0, toDistribute.size()-1));
 		addCountry(toAdd);
 		toDistribute.remove(toAdd);

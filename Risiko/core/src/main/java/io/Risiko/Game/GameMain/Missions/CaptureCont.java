@@ -18,7 +18,11 @@ public class CaptureCont extends Mission{
 	@Override
 	public boolean checkWinCon() {
 		if(cont == null) return false;
-		return false;
+		
+		model.refreshContinentOwnership(player);
+		
+		if(player.getOwnedConts().contains(cont)) return true;
+		else return false;
 	}
 
 	@Override

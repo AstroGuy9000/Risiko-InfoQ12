@@ -13,6 +13,7 @@ import io.Risiko.Game.GameMain.Card.Card_Type;
 import io.Risiko.Game.GameMain.Missions.Assassination;
 import io.Risiko.Game.GameMain.Missions.CaptureCont;
 import io.Risiko.Game.GameMain.Missions.CaptureTwelve;
+import io.Risiko.Game.GameMain.Missions.CaptureTwentyfour;
 import io.Risiko.Game.GameMain.Missions.MissionUtils;
 import io.Risiko.Game.GameMain.Missions.MissionUtils.SecretMission;
 import io.Risiko.Game.GameMain.Missions.WorldDomination;
@@ -63,7 +64,7 @@ public class GameplayModel extends TravelNetwork {
 					break;
 					
 				case SecretMission.CaptureTwentyfour:
-					i.setMission(new CaptureTwelve(this, i));
+					i.setMission(new CaptureTwentyfour(this, i));
 					break;
 					
 				case SecretMission.Assassination:
@@ -88,19 +89,19 @@ public class GameplayModel extends TravelNetwork {
 		cardBank = new ArrayList<Card>();
 		
 		for(int i = 0; i < infantry; i++) {
-			Country country = countries.get(MiscUtils.getRandomNumber(0, countries.size()));
+			Country country = countries.get(MiscUtils.getRandomNumber(0, countries.size()-1));
 			new Card(Card_Type.Infantry, country, cardBank);
 			countries.remove(country);
 		}
 		
 		for(int i = 0; i < cavalry; i++) {
-			Country country = countries.get(MiscUtils.getRandomNumber(0, countries.size()));
+			Country country = countries.get(MiscUtils.getRandomNumber(0, countries.size()-1));
 			new Card(Card_Type.Cavalry, country, cardBank);
 			countries.remove(country);
 		}
 		
 		for(int i = 0; i < cavalry; i++) {
-			Country country = countries.get(MiscUtils.getRandomNumber(0, countries.size()));
+			Country country = countries.get(MiscUtils.getRandomNumber(0, countries.size()-1));
 			new Card(Card_Type.Artillery, country, cardBank);
 			countries.remove(country);
 		}

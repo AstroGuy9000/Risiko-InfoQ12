@@ -1,6 +1,7 @@
 package io.Risiko.Utils;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
@@ -33,8 +34,26 @@ public class MiscUtils {
 	
 	// https://www.baeldung.com/java-generating-random-numbers-in-range
 	static public int getRandomNumber(int min, int max) {
-	    return (int) ((Math.random() * (max - min)) + min);
+		Random rand = new Random();
+	    return rand.nextInt((max - min) + 1) + min;
 	}
+	
+//	static public void randomNumTest() {
+//		
+//		int min = 3;
+//		int max = 8;
+//		
+//		System.out.println("test start");
+//		for(int i = 0; i < 100; i++) {
+//			int x = getRandomNumber(min, max);
+//			System.out.println(x);
+//			if(x < min || x > max) {
+//				System.out.println("fail");
+//				break;
+//			}
+//		}
+//		System.out.println("test done");
+//	}
 	
 	static public int d6() {
 	    return getRandomNumber(1, 6);
