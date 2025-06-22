@@ -248,10 +248,6 @@ public class TravelNetwork {
 	protected void addRoute(Country countryA, Country countryB) {
 		movement.get(countryA.getName()).add(countryB);
 		movement.get(countryB.getName()).add(countryA);
-		
-		System.out.println("   Add Route");
-		System.out.println(" Has Route: " + countryA.getName() + " " + countryB.getName() + " : " + movement.get(countryA.getName()).contains(countryB));
-		System.out.println("--  --  --  --  --  --  --  --");
 	}
 	
 	/**
@@ -263,10 +259,6 @@ public class TravelNetwork {
 	protected void removeRoute(Country countryA, Country countryB) {
 		movement.get(countryA.getName()).remove(countryB);
 		movement.get(countryB.getName()).remove(countryA);
-		
-		System.out.println("Remove Route");
-		System.out.println(" Has Route: " + countryA.getName() + " " + countryB.getName() + " : " + movement.get(countryA.getName()).contains(countryB));
-		System.out.println("--  --  --  --  --  --  --  --");
 	}
 	
 	/**
@@ -315,22 +307,37 @@ public class TravelNetwork {
 		decoLines.remove(index);
 	}
 	
+	/**
+	 * @return
+	 */
 	public HashMap<String,Continent> getStrToCont() {
 		return strToContinent;
 	}
 	
+	/**
+	 * @return
+	 */
 	public HashMap<String,Country> getStrToCountry() {
 		return strToCountry;
 	}
 	
+	/**
+	 * @return
+	 */
 	public HashMap<String,HashSet<Country>> getContMembers() {
 		return contMembers;
 	}
 	
+	/**
+	 * @return
+	 */
 	public HashMap<String,HashSet<Country>> getMovMap() {
 		return movement;
 	}
 	
+	/**
+	 * @return
+	 */
 	public ArrayList<float[]> getDecoLines() {
 		return decoLines;
 	}
@@ -352,6 +359,11 @@ public class TravelNetwork {
 		return depthSearchRec(start, target);
 	}
 	
+	/**
+	 * @param start
+	 * @param target
+	 * @return
+	 */
 	private boolean depthSearchRec(Country start, Country target) {	
 		start.setFlag(true);
 		if(start == target) return true;

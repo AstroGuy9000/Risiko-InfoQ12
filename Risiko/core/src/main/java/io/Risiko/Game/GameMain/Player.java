@@ -71,12 +71,10 @@ public class Player {
 	public void addCountry(Country country) {
 		countries.add(country);
 		country.setOccupant(this);
-		System.out.println("Country " + country.getName() + " added to " + name);
 	}
 	
 	public void removeCountry(Country country) {
 		countries.remove(country);
-		System.out.println("Country " + country.getName() + " removed from " + name);
 	}
 	
 	public void setNextPlayer(Player nextPlayerIn) {

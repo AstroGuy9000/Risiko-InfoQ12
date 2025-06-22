@@ -113,8 +113,6 @@ public class AddPlayersMenu extends Menu {
 		}
 		if(!isNameOK()) return;
 		
-		System.out.println("next player");
-		
 		nextPlayer.setVisible(false);
 		toGame.setVisible(false);
 		
@@ -157,8 +155,6 @@ public class AddPlayersMenu extends Menu {
 		
 		if(nameNew.length() > 18) {
 			enterNameField.setText(nameNew.substring(0, 18));
-			
-			System.out.println(enterNameField.getText());
 			
 			enterNameField.setCursorPosition(Math.min(cursorPos, enterNameField.getText().length()));
 			return;

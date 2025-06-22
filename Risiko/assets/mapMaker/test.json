@@ -1,7 +1,65 @@
 {
-strToContinent: {}
-strToCountry: {}
-contMembers: {}
-movement: {}
+strToContinent: {
+	testCont1: {
+		name: testCont1
+		bonus: 12
+		color: {
+			r: 0.50980395
+			g: 0.59607846
+			b: 0.22352941
+			a: 1
+		}
+	}
+}
+strToCountry: {
+	1l: {
+		name: 1l
+		vertsList: [ 210, 94.99998, 300.3125, 145.93748, 228.43752, 177.18748 ]
+		polyFull: {
+			poly: {
+				localVertices: [ 210, 94.99998, 300.3125, 145.93748, 228.43752, 177.18748 ]
+				worldVertices: [ 210, 94.99998, 300.3125, 145.93748, 228.43752, 177.18748 ]
+				dirty: false
+				bounds: {
+					x: 210
+					y: 94.99998
+					width: 90.3125
+					height: 82.18751
+				}
+			}
+			triangulationRaw: {
+				items: [ 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ]
+				size: 3
+			}
+			verticesPolyRaw: [ 210, 94.99998, 300.3125, 145.93748, 228.43752, 177.18748 ]
+			verticesPoly: [
+				[ 210, 94.99998 ]
+				[ 300.3125, 145.93748 ]
+				[ 228.43752, 177.18748 ]
+			]
+			triangles: [
+				[ 2, 1, 0 ]
+			]
+			boundRect: {
+				x: 203
+				y: 87.99998
+				width: 104.3125
+				height: 96.18751
+			}
+		}
+		drawReady: true
+	}
+}
+contMembers: {
+	testCont1: [
+		{
+			class: java.lang.String
+			value: 1l
+		}
+	]
+}
+movement: {
+	1l: []
+}
 decoLines: []
 }

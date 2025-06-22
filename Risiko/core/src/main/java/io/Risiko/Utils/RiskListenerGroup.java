@@ -23,7 +23,6 @@ public class RiskListenerGroup {
 	}
 	
 	public void thingHappened() {
-		System.out.println("RiskListenerGroup notified");
 		for(RiskListener i: listeners) {
 			i.thingHappened();
 		}

@@ -422,7 +422,7 @@ public class CreatorView {
 	protected void countryNameRequest(Country country) {
 		controller.suspendInput();
 		
-		TextInputWindow textWindow = new TextInputWindow("Name des Landes", skin, main.getBinds());
+		TextInputWindow textWindow = new TextInputWindow("Country Name", skin, main.getBinds());
 		
 		if(country.getName() != null) {
 			textWindow.setText(country.getName());
@@ -496,9 +496,6 @@ public class CreatorView {
 		confirm.addListener(new ChangeListener() {
 			@Override
 			public void changed(ChangeEvent event, Actor actor) {
-				
-				System.out.println("hiiiii");
-				System.out.println(list.getSelected());
 				
 				if(list.getSelected() != null) {
 					String contName = list.getSelected();
@@ -836,8 +833,6 @@ public class CreatorView {
 			
 			if(nameNew.length() > 18) {
 				name.setText(nameNew.substring(0, 18));
-				
-				System.out.println(name.getText());
 				
 				name.setCursorPosition(Math.min(cursorPos, name.getText().length()));
 				return;

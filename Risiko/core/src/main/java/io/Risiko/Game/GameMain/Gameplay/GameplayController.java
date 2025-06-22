@@ -47,19 +47,19 @@ public class GameplayController implements Controller{
 		
 		binds = main.getBinds();
 		
-		model = new GameplayModel(map, playersIn, isSecretMission);
-		view = new GameplayView(this);
-		
-		cam = view.getCam();
-		clampCam();
-		
-		Object[] countriesArr = model.getStrToCountry().values().toArray();
+		Object[] countriesArr = map.getStrToCountry().values().toArray();
 		ArrayList<Country> countries = new ArrayList<Country>();
 		for(Object i: countriesArr) {
 			countries.add( (Country) i );
 		}
 		
 		playersIn.get(0).distributeCountries(countries);
+		
+		model = new GameplayModel(map, playersIn, isSecretMission);
+		view = new GameplayView(this);
+		
+		cam = view.getCam();
+		clampCam();
 		
 		profile = new Generic();
 	}
@@ -265,11 +265,11 @@ public class GameplayController implements Controller{
 				view.openPauseMenu();
 			}
 			
-			if(keycode == binds.OUTLINES) {
+			if(keycode == binds.FUNC2) {
 				view.openCardMenu();
 			}
 			
-			if(keycode == binds.SHOW_POLY) {
+			if(keycode == binds.FUNC1) {
 				view.openContLegend();
 			}
 			

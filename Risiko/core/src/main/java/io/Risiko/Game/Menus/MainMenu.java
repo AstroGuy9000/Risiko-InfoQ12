@@ -36,6 +36,10 @@ public class MainMenu extends Menu {
 
 	public MainMenu(Main mainIn) {
 		super(mainIn);
+		
+		System.out.println("- - - - -");
+		System.out.println("MAIN MENU");
+		System.out.println("- - - - -");
 
 		creditsTab = new Table(skin);
 		creditsTab.setFillParent(true);

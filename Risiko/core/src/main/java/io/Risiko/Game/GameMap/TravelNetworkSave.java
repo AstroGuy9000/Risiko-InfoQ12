@@ -57,7 +57,6 @@ public class TravelNetworkSave {
 				if(strToCountry.get(x) == null) {
 					System.out.println("Key " + i + " is null in contMembers");
 				}
-				System.out.println("testttt");
 			}
 			contMembersRebuilt.put(i, temp);
 		}

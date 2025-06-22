@@ -16,13 +16,13 @@ public class KeyBinds {
 	public final int ZOOM_OUT;
 	
 	public final int CYCLE;
-	public final int SHOW_POLY;
-	public final int OUTLINES;
+	public final int FUNC1;
+	public final int FUNC2;
 	public final int UNDO;
 	
 	public final int SHIFT;
 	
-	public static final String[] bindsKeysArr = new String[] {"UP ", "DOWN ", "LEFT ", "RIGHT ", "ACCEPT ", "BACK ", "ZOOM IN ", "ZOOM OUT ", "CYCLE ", "SHOW POLY ", "SHOW OUTLINES ", "UNDO ", "SHIFT "};
+	public static final String[] bindsKeysArr = new String[] {"UP ", "DOWN ", "LEFT ", "RIGHT ", "ACCEPT ", "BACK ", "ZOOM IN ", "ZOOM OUT ", "CYCLE ", "FUNCTION 1 ", "FUNCTION 2 ", "UNDO ", "SHIFT "};
 	
 	public KeyBinds() {
 		UP = Keys.W;
@@ -37,8 +37,8 @@ public class KeyBinds {
 		ZOOM_OUT = Keys.E;
 		
 		CYCLE = Keys.TAB;
-		SHOW_POLY = Keys.R;
-		OUTLINES = Keys.O;
+		FUNC1 = Keys.R;
+		FUNC2 = Keys.O;
 		UNDO = Keys.Z;
 		
 		SHIFT = Keys.SHIFT_LEFT;
@@ -57,8 +57,8 @@ public class KeyBinds {
 		ZOOM_OUT = binds[7];
 		
 		CYCLE = binds[8];
-		SHOW_POLY = binds[9];
-		OUTLINES = binds[10];
+		FUNC1 = binds[9];
+		FUNC2 = binds[10];
 		UNDO = binds[11];
 		
 		SHIFT = binds[12];
@@ -69,6 +69,6 @@ public class KeyBinds {
 	}
 	
 	public int[] currentBindsArr() {
-		return new int[] {UP, DOWN, LEFT, RIGHT, ACCEPT, BACK, ZOOM_IN, ZOOM_OUT, CYCLE, SHOW_POLY, OUTLINES, UNDO, SHIFT};
+		return new int[] {UP, DOWN, LEFT, RIGHT, ACCEPT, BACK, ZOOM_IN, ZOOM_OUT, CYCLE, FUNC1, FUNC2, UNDO, SHIFT};
 	}
 }

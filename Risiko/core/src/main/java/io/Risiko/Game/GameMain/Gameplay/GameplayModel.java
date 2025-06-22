@@ -51,7 +51,6 @@ public class GameplayModel extends TravelNetwork {
 				switch(MissionUtils.getRandomSecretMission()) {
 				
 				default:
-					System.out.println("Default in SecretMission switch statement");
 					i.setMission(new CaptureTwelve(this, i));
 					break;
 					
@@ -349,7 +348,8 @@ public class GameplayModel extends TravelNetwork {
 	
 	protected class GameStartup extends SetupPhase{
 		
-		int counter;
+		private int counter;
+		private int startTroops;
 		
 		private GameStartup(Player last) {
 			super(new Phase(last) {
@@ -365,7 +365,10 @@ public class GameplayModel extends TravelNetwork {
 				}
 			});
 			counter = 0;
-			toSpendTroops = 30;
+			
+			startTroops = 50 - (players.size()*5);
+			
+			toSpendTroops = startTroops;
 		}
 		
 		@Override
@@ -383,10 +386,9 @@ public class GameplayModel extends TravelNetwork {
 		protected void nextPhase() {
 			if(toSpendTroops > 0) return;
 			if(counter < players.size()-1) {
-				System.out.println("Player " + owner.getName() + " completed Game startup");
 				setOwner(owner.getNextPlayer());
 				selection.clear();
-				toSpendTroops = 30;
+				toSpendTroops = startTroops;
 				turnListeners.thingHappened();
 				counter++;
 			} else {
@@ -409,9 +411,6 @@ public class GameplayModel extends TravelNetwork {
 		private SetupPhase(Phase previousPhase) {
 			super(previousPhase);
 			
-			System.out.println("Phase: Setup");
-			
-			
 			int limit = 0;
 			while(owner.getNextPlayer().getCountries().isEmpty()) {
 				owner = owner.getNextPlayer();
@@ -423,16 +422,11 @@ public class GameplayModel extends TravelNetwork {
 			
 			turnListeners.thingHappened();
 			
-			System.out.println("Setup Owner " + owner.getName());
-			
 			toSpendTroops = (int) Math.floor(owner.getCountries().size()/3f);
 			toSpendTroops = Math.max(3, toSpendTroops);
 			
 			refreshContinentOwnership(owner);
-			for(Continent i: owner.getOwnedConts()) {
-				toSpendTroops = toSpendTroops + i.getBonus();
-				System.out.println(owner.getName() + " recerived a troop bonus of " + i.getBonus() + " for owning the Continent " + i.getName());
-			}
+			for(Continent i: owner.getOwnedConts()) toSpendTroops = toSpendTroops + i.getBonus();
 		}
 		
 		private class AddTroops implements GameAction {
@@ -450,9 +444,6 @@ public class GameplayModel extends TravelNetwork {
 				targetIn.addTroops(troops);
 				
 				addAction(AddTroops.this);
-				
-				System.out.println("Spent " + troops + " troops");
-				System.out.println(toSpendTroops + " troops remaining");
 			}
 			
 			public boolean undoAction() {
@@ -563,8 +554,6 @@ public class GameplayModel extends TravelNetwork {
 		
 		private AttackPhase(Phase previousPhase) {
 			super(previousPhase);
-			
-			System.out.println("Phase: Attack");
 		}
 		
 		private class AttackCountry implements GameAction{
@@ -612,7 +601,6 @@ public class GameplayModel extends TravelNetwork {
 				target.addTroops(-lossDefend);
 				
 				if(target.getTroops() <= 0) {
-					System.out.println(owner.getName() + " has conquered " + target.getName() + " from " + start.getName());
 					
 					Card pulledCard = pullCard();
 					if(pulledCard != null) start.getOccupant().addCard(pulledCard);
@@ -654,8 +642,22 @@ public class GameplayModel extends TravelNetwork {
 				
 				addAction(AttackCountry.this);
 				
-				System.out.println(owner.getName() + " attacked " + target.getName() + " from " + start.getName() + " with " + troops + " troops.");
-				System.out.println("Troops: " + troops + " |InputTroops: " + inputTroops);
+				String attackRollsStr = "";
+				for(int i = 0; i < attackRolls.length; i++) {
+					attackRollsStr = Integer.toString(attackRolls[i]) + " " + attackRollsStr;
+				}
+				
+				String defendRollsStr = "";
+				for(int i = 0; i < defendRolls.length; i++) {
+					defendRollsStr = Integer.toString(defendRolls[i])  + " " + defendRollsStr;
+				}
+				
+				
+				System.out.println("Attacker rolls: " + attackRollsStr);
+				System.out.println("Defender rolls: " + defendRollsStr);
+				System.out.println("Attacker losses: " + lossAttack);
+				System.out.println("Defender losses: " + lossDefend);
+				System.out.println("- - - - - - - - - - - - - - - - - - - -");
 				
 				if(inputTroops > troops && (start.getTroops()-1) >= (inputTroops-troops) && conquered == null) {
 					new AttackCountry(start, target, inputTroops-troops);
@@ -806,8 +808,6 @@ public class GameplayModel extends TravelNetwork {
 		
 		private FortifyPhase(Phase previousPhase) {
 			super(previousPhase);
-			
-			System.out.println("Phase: Fortify");
 		}
 		
 		private class TransferTroops implements GameAction {
