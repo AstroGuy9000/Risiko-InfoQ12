@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
+/**
+ * Wird nur verwendet um <TravelNetwork> in einer Datei zu speichern und zu laden.
+ * Dient zur Optimisierung der Dateiengröße.
+ */
 public class TravelNetworkSave {
 	
 	private HashMap<String,Continent> strToContinent;
@@ -42,7 +46,7 @@ public class TravelNetworkSave {
 		decoLines = travel.getDecoLines();
 	}
 	
-	protected TravelNetwork rebuildTravelNetwork() {
+	public TravelNetwork rebuildTravelNetwork() {
 		
 		HashMap<String,HashSet<Country>> contMembersRebuilt = new HashMap<String,HashSet<Country>>();
 		for(String i: contMembers.keySet()) {
@@ -53,7 +57,6 @@ public class TravelNetworkSave {
 				if(strToCountry.get(x) == null) {
 					System.out.println("Key " + i + " is null in contMembers");
 				}
-				System.out.println("testttt");
 			}
 			contMembersRebuilt.put(i, temp);
 		}

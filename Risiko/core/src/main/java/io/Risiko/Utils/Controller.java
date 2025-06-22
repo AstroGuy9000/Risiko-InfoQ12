@@ -1,9 +1,13 @@
-package io.Risiko.Interfaces;
+package io.Risiko.Utils;
 
 import java.util.ArrayList;
 
 import io.Risiko.Main;
 
+/**
+ * Die Controller Interface dient dazu ermöglicht es verschiedene Controller mit verschiedenem Verhalten zu nutzen.
+ * Der Controller beinhaltet alle Funktionen die nötig sind um eine Spielszene(Menü usw.) zu implementieren.
+ */
 public interface Controller {
 	
 	public void drawScreen();

@@ -5,6 +5,9 @@ import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.ShortArray;
 
+/**
+ * Verinfacht den Umgang mit Polygonen
+ */
 public class PolygonTriangulated{	// --> Umgang mit Polygons in der Grafik vereinfachen
 	
 	private Polygon poly;

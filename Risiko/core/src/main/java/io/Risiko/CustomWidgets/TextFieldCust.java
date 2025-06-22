@@ -67,7 +67,7 @@ import io.Risiko.KeyBinds;
  * implementation will bring up the default IME.
  * @author mzechner
  * @author Nathan Sweet */
-public class TextFieldCust extends Widget implements Disableable {
+public abstract class TextFieldCust extends Widget implements Disableable {
 	static protected final char BACKSPACE = 8;
 	static protected final char CARRIAGE_RETURN = '\r';
 	static protected final char NEWLINE = '\n';
@@ -840,11 +840,11 @@ public class TextFieldCust extends Widget implements Disableable {
 		}
 	}
 	
-	public void thingTyped(char character) {}
+	abstract public void thingTyped(char character);
 	
-	public void acceptPressed() {}
+	abstract public void acceptPressed();
 	
-	public void backPressed() {}
+	abstract public void backPressed();
 
 	/** Basic input listener for the text field */
 	public class TextFieldClickListener extends ClickListener {

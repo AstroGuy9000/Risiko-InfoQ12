@@ -14,80 +14,78 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 //import com.badlogic.gdx.utils.ScreenUtils;
 
 import io.Risiko.Main;
+import io.Risiko.Game.GameMain.GameplayMenus.GameOptionsMenu;
 import io.Risiko.Game.GameMap.CreatorController;
-import io.Risiko.Interfaces.Controller;
+import io.Risiko.Game.Testing.RGBdistanceTestMenu;
+import io.Risiko.Utils.Controller;
+import io.Risiko.Utils.Menu;
 
-public class MainMenu implements Controller {
+public class MainMenu extends Menu {
 
-	private Main main;
-	private Stage stageUI;
-	private Table mainTab;
 	private Table creditsTab;
-	private Skin skin;
-
-	//private Color backgroundColor;
 
 	private Label title;
 	private TextButton startGame;
 	private TextButton changeBinds;
 	private TextButton makeMap;
 	private TextButton quit;
+	
+	private TextButton testing;
 
 	private Label credits;
 
 	public MainMenu(Main mainIn) {
-		main = mainIn;
+		super(mainIn);
 		
-		stageUI = main.getStageUI();
-		stageUI.clear();
-		
-		skin = main.getSkin();
-
-		mainTab = new Table(skin);
-		mainTab.setFillParent(true);
-		stageUI.addActor(mainTab);
-		mainTab.setBounds(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-		mainTab.setBackground("window");
+		System.out.println("- - - - -");
+		System.out.println("MAIN MENU");
+		System.out.println("- - - - -");
 
 		creditsTab = new Table(skin);
 		creditsTab.setFillParent(true);
 		stageUI.addActor(creditsTab);
 		creditsTab.setBounds(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
-		//backgroundColor = ColorsC64.BLUE;
-
-		title = new Label("Risiko", skin);
+		title = new Label("Risk", skin);
 		title.setFontScale(3);
 
-		credits = new Label("UI von Raymond \"Raeleus\" Buckley", skin, "optional");
+		credits = new Label("UI by Raymond \"Raeleus\" Buckley", skin, "optional");
 		credits.setFontScale(0.5f);
 
-		startGame = new TextButton("Spiel Starten", skin);
+		startGame = new TextButton("PLAY", skin);
 		startGame.addListener(new ChangeListener() {
 			public void changed (ChangeEvent event, Actor actor) {
-				System.out.println("Changed!");
+				stageUI.clear();
+				main.setState(new GameOptionsMenu(main));
 			}});
 
-		changeBinds = new TextButton("Einstellungen", skin);
+		changeBinds = new TextButton("Settings", skin);
 		changeBinds.addListener(new ChangeListener() {	
 			public void changed (ChangeEvent event, Actor actor) {
 				stageUI.clear();
 				main.setState(new BindsMenu(main));
 			}});
 
-		makeMap =  new TextButton("Karte erstellen", skin);
+		makeMap =  new TextButton("Map Designer", skin);
 		makeMap.addListener(new ChangeListener() {
 			public void changed (ChangeEvent event, Actor actor) {
 				stageUI.clear();
 				main.setState(new CreatorController(main));
 			}});
 
-		quit =  new TextButton("Zum Desktop", skin);
+		quit =  new TextButton("Exit to Desktop", skin);
 		quit.addListener(new ChangeListener() {
 			public void changed (ChangeEvent event, Actor actor) {
 				stageUI.clear();
 				System.exit(0);
 			}});
+		
+//		testing =  new TextButton("Test-Zone", skin);
+//		testing.addListener(new ChangeListener() {
+//			public void changed (ChangeEvent event, Actor actor) {
+//				stageUI.clear();
+//				main.setState(new RGBdistanceTestMenu(main));
+//			}});
 
 		mainTab.center().add(title).padBottom(60);
 		mainTab.row();
@@ -97,44 +95,10 @@ public class MainMenu implements Controller {
 		mainTab.row();
 		mainTab.add(makeMap).padBottom(70);
 		mainTab.row();
-		mainTab.add(quit);
+		mainTab.add(quit).padBottom(100);
+//		mainTab.row();
+//		mainTab.add(testing);
 
 		creditsTab.pad(25).bottom().left().add(credits);
-	}
-
-	@Override
-	public void drawScreen() {
-		//ScreenUtils.clear(backgroundColor);
-		stageUI.draw();
-	}
-	
-	@Override
-	public void resize(int width, int height) {}
-
-	@Override
-	public void doTick(ArrayList<Integer> keyInputs, ArrayList<Integer> buttonInputs) {
-		// TODO Auto-generated method stub
-		stageUI.act();
-	}
-
-	@Override
-	public void keyPressed(int keycode) {
-		main.addKeyInput(keycode);
-	}
-
-	@Override
-	public void keyDepressed(int keycode) {
-		main.removeKeyInput(keycode);
-	}
-
-	@Override
-	public void buttonPressed(int buttoncode) {
-		main.addButtonInput(buttoncode);
-	}
-
-	@Override
-	public void buttonDepressed(int buttoncode) {
-		main.removeButtonInput(buttoncode);
-
 	}
 }

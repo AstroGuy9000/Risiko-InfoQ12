@@ -16,7 +16,7 @@ import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 
 import io.Risiko.Game.Menus.MainMenu;
-import io.Risiko.Interfaces.Controller;
+import io.Risiko.Utils.Controller;
 
 /**
  * {@link com.badlogic.gdx.ApplicationListener} implementation shared by all

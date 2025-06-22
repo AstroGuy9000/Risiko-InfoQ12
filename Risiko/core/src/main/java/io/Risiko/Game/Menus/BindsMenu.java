@@ -18,15 +18,10 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import io.Risiko.KeyBinds;
 import io.Risiko.Main;
 import io.Risiko.CustomWidgets.ListCust;
-import io.Risiko.Interfaces.Controller;
+import io.Risiko.Utils.Controller;
+import io.Risiko.Utils.Menu;
 
-public class BindsMenu implements Controller{
-
-	private Main main;
-	private Stage stageUI;
-	private Table mainTab;
-	private Table notifTab;
-	private Skin skin;
+public class BindsMenu extends Menu {
 	
 	private Label title;
 	private ListCust<String> nameList;
@@ -47,27 +42,11 @@ public class BindsMenu implements Controller{
 	private int whoIsListening;
 	
 	public BindsMenu(Main mainIn) {
-		main = mainIn;
-		
-		stageUI = main.getStageUI();
-		stageUI.clear();
-		
-		skin = main.getSkin();
-		
-		mainTab = new Table(skin);
-		mainTab.setFillParent(true);
-		stageUI.addActor(mainTab);
-		mainTab.setBounds(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-		mainTab.setBackground("window");
-		
-		notifTab = new Table(skin);
-		notifTab.setFillParent(true);
-		stageUI.addActor(notifTab);
-		notifTab.setBounds(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		super(mainIn);
 		
 		unassignedCounter = 0;
 		
-		title = new Label("Einstellungen", skin);
+		title = new Label("Settings", skin);
 		title.setFontScale(2);
 		
 		nameList = new ListCust<String>(skin, "dimmed", main.getBinds());
@@ -118,7 +97,7 @@ public class BindsMenu implements Controller{
 		
 		stageUI.setKeyboardFocus(bindsList);
 		
-		saveChanges = new TextButton("Einstellungen speichern", skin);
+		saveChanges = new TextButton("Save Settings", skin);
 		saveChanges.addListener(new ChangeListener() {
 			public void changed (ChangeEvent event, Actor actor) {
 				if(checkBinds()) {
@@ -139,7 +118,7 @@ public class BindsMenu implements Controller{
 				updateListContent();
 			}});
 		
-		toMenu = new TextButton("Zurueck", skin);
+		toMenu = new TextButton("Main Menu", skin);
 		toMenu.addListener(new ChangeListener() {
 			public void changed (ChangeEvent event, Actor actor) {
 				stageUI.clear();
@@ -157,34 +136,21 @@ public class BindsMenu implements Controller{
 		mainTab.add(toMenu);
 		
 		notif = new Window("", skin, "dialog");
-		notif.add(new Label("Warte aud neue Taste", skin, "optional")).pad(20).padTop(10);
+		notif.setFillParent(true);
+		notif.setMovable(false);
+		notif.add(new Label("Waiting for Input", skin, "optional")).pad(20).padTop(10);
 		
 		//stageUI.setDebugAll(true);
-	}
-
-	@Override
-	public void drawScreen() {
-		stageUI.draw();
-	}
-	
-	@Override
-	public void resize(int width, int height) {}
-	
-	@Override
-	public void doTick(ArrayList<Integer> keyInputs, ArrayList<Integer> buttonInputs) {
-		stageUI.act();
 	}
 	
 	@Override
 	public void keyPressed(int keycode) {
 		if(isListening) {
 			if(keycode == Keys.BACKSPACE) {
-				System.out.println("unassign key");
 				if(whoIsListening == 4) {	// bindsKeysArr[4] --> Accept
 					main.addKeyInput(keycode);
-					System.out.println("nuh uh");
 					setListening(false);
-					notifTab.clear();
+					popupTab.clear();
 					return;
 				}
 				bindsArr[whoIsListening] = unassigned + unassignedCounter;
@@ -204,7 +170,7 @@ public class BindsMenu implements Controller{
 			bindsArr[whoIsListening] = keycode;
 			updateListContent();
 			setListening(false);
-			notifTab.clear();
+			popupTab.clear();
 		}
 		
 		if(keycode == main.getBinds().ACCEPT) {
@@ -212,21 +178,6 @@ public class BindsMenu implements Controller{
 			whoIsListening = bindsList.getSelectedIndex();
 		}
 		main.addKeyInput(keycode);
-	}
-	
-	@Override
-	public void keyDepressed(int keycode) {
-		main.removeKeyInput(keycode);
-	}
-	
-	@Override
-	public void buttonPressed(int buttoncode) {
-		main.addButtonInput(buttoncode);
-	}
-	
-	@Override
-	public void buttonDepressed(int buttoncode) {
-		main.removeButtonInput(buttoncode);
 	}
 	
 	private void updateListContent() {
@@ -263,11 +214,11 @@ public class BindsMenu implements Controller{
 		isListening = bool;
 		if(bool) {
 			stageUI.unfocusAll();
-			notifTab.reset();
-			notifTab.add(notif);
+			popupTab.reset();
+			popupTab.add(notif);
 		} else {
 			stageUI.setKeyboardFocus(bindsList);
-			notifTab.reset();
+			popupTab.reset();
 		}
 	}
 }

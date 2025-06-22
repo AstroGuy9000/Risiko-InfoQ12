@@ -1,0 +1,163 @@
+{
+strToContinent: {
+	testCont: {
+		name: testCont
+		color: {
+			r: 0.5882353
+			g: 0.023529412
+			b: 0.023529412
+			a: 1
+		}
+	}
+}
+strToCountry: {
+	A: {
+		name: A
+		vertsList: [ 248.75002, 152.39584, 299.1667, 88.22917, 343.8542, 253.22917 ]
+		polyFull: {
+			poly: {
+				localVertices: [ 248.75002, 152.39584, 299.1667, 88.22917, 343.8542, 253.22917 ]
+				worldVertices: [ 248.75002, 152.39584, 299.1667, 88.22917, 343.8542, 253.22917 ]
+				dirty: false
+				bounds: {
+					x: 248.75002
+					y: 88.22917
+					width: 95.10417
+					height: 165
+				}
+			}
+			triangulationRaw: {
+				items: [ 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ]
+				size: 3
+			}
+			verticesPolyRaw: [ 248.75002, 152.39584, 299.1667, 88.22917, 343.8542, 253.22917 ]
+			verticesPoly: [
+				[ 248.75002, 152.39584 ]
+				[ 299.1667, 88.22917 ]
+				[ 343.8542, 253.22917 ]
+			]
+			triangles: [
+				[ 2, 1, 0 ]
+			]
+			boundRect: {
+				x: 241.75002
+				y: 81.22917
+				width: 109.10417
+				height: 179
+			}
+		}
+		drawReady: true
+	}
+	B: {
+		name: B
+		vertsList: [ 451.56253, 229.16666, 436.66672, 129.47916, 545.5209, 153.54166 ]
+		polyFull: {
+			poly: {
+				localVertices: [ 451.56253, 229.16666, 436.66672, 129.47916, 545.5209, 153.54166 ]
+				worldVertices: [ 451.56253, 229.16666, 436.66672, 129.47916, 545.5209, 153.54166 ]
+				dirty: false
+				bounds: {
+					x: 436.66672
+					y: 129.47916
+					width: 108.85416
+					height: 99.6875
+				}
+			}
+			triangulationRaw: {
+				items: [ 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ]
+				size: 3
+			}
+			verticesPolyRaw: [ 451.56253, 229.16666, 436.66672, 129.47916, 545.5209, 153.54166 ]
+			verticesPoly: [
+				[ 451.56253, 229.16666 ]
+				[ 436.66672, 129.47916 ]
+				[ 545.5209, 153.54166 ]
+			]
+			triangles: [
+				[ 2, 1, 0 ]
+			]
+			boundRect: {
+				x: 429.66672
+				y: 122.47916
+				width: 122.85416
+				height: 113.6875
+			}
+		}
+		drawReady: true
+	}
+	C: {
+		name: C
+		vertsList: [ 336.9792, 403.33334, 379.37503, 226.875, 480.20837, 378.125 ]
+		polyFull: {
+			poly: {
+				localVertices: [ 336.9792, 403.33334, 379.37503, 226.875, 480.20837, 378.125 ]
+				worldVertices: [ 336.9792, 403.33334, 379.37503, 226.875, 480.20837, 378.125 ]
+				dirty: false
+				bounds: {
+					x: 336.9792
+					y: 226.875
+					width: 143.22919
+					height: 176.45834
+				}
+			}
+			triangulationRaw: {
+				items: [ 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ]
+				size: 3
+			}
+			verticesPolyRaw: [ 336.9792, 403.33334, 379.37503, 226.875, 480.20837, 378.125 ]
+			verticesPoly: [
+				[ 336.9792, 403.33334 ]
+				[ 379.37503, 226.875 ]
+				[ 480.20837, 378.125 ]
+			]
+			triangles: [
+				[ 2, 1, 0 ]
+			]
+			boundRect: {
+				x: 329.9792
+				y: 219.875
+				width: 157.22919
+				height: 190.45834
+			}
+		}
+		drawReady: true
+	}
+}
+contMembers: {
+	testCont: [
+		{
+			class: java.lang.String
+			value: B
+		}
+		{
+			class: java.lang.String
+			value: C
+		}
+	]
+}
+movement: {
+	A: [
+		{
+			class: java.lang.String
+			value: C
+		}
+	]
+	B: [
+		{
+			class: java.lang.String
+			value: C
+		}
+	]
+	C: [
+		{
+			class: java.lang.String
+			value: A
+		}
+		{
+			class: java.lang.String
+			value: B
+		}
+	]
+}
+decoLines: []
+}

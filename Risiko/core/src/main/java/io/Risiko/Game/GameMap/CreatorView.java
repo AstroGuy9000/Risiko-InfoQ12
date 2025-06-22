@@ -42,7 +42,7 @@ import io.Risiko.CustomWidgets.TextInputWindow.TextInputWindow;
 import io.Risiko.CustomWidgets.TextInputWindow.TextInputWindowListener;
 import io.Risiko.Game.GameMap.CreatorController.CrtKeyProfile;
 import io.Risiko.Game.Menus.MainMenu;
-import io.Risiko.Utils.Utils;
+import io.Risiko.Utils.MiscUtils;
 
 public class CreatorView {
 	
@@ -90,7 +90,7 @@ public class CreatorView {
 		stageUI = main.getStageUI();
 		stageUI.clear();
 		
-		viewport = Utils.makeDefaultViewport();
+		viewport = MiscUtils.makeDefaultViewport();
 		stageMap = new Stage(viewport);
 		cam = (OrthographicCamera) viewport.getCamera();
 		
@@ -116,7 +116,7 @@ public class CreatorView {
 		escMenuGroup.setFillParent(false);
 		escMenuGroup.center();
 		
-		toMenu = new TextButton("Zurueck", skin);
+		toMenu = new TextButton("Main Menu", skin);
 		toMenu.addListener(new ChangeListener() {
 			public void changed (ChangeEvent event, Actor actor) {
 				stageUI.clear();
@@ -127,6 +127,8 @@ public class CreatorView {
 		loadFile = new TextButton("Load File", skin);
 		loadFile.addListener(new ChangeListener() {
 			public void changed (ChangeEvent event, Actor actor) {
+				if(popupTab.hasChildren()) return;
+				
 				FileMenu loadFileMenu = new FileMenu("Load", skin, Gdx.files.local("MapMaker"), "json", main.getBinds());
 				
 				loadFileMenu.setKeyboardFocus(stageUI);
@@ -145,6 +147,8 @@ public class CreatorView {
 		saveFile = new TextButton("Save File", skin);
 		saveFile.addListener(new ChangeListener() {
 			public void changed (ChangeEvent event, Actor actor) {
+				if(popupTab.hasChildren()) return;
+				
 				FileMenu saveFileMenu = new FileMenu("Save", skin, Gdx.files.local("MapMaker"), "json", main.getBinds());
 				popupTab.add(saveFileMenu);
 				
@@ -163,6 +167,8 @@ public class CreatorView {
 		saveFileAs = new TextButton("Save File As", skin);
 		saveFileAs.addListener(new ChangeListener() {
 			public void changed (ChangeEvent event, Actor actor) {
+				if(popupTab.hasChildren()) return;
+				
 				TextInputWindow textWindow = new TextInputWindow("New File", skin, main.getBinds());
 				
 				textWindow.giveKeyFocus(stageUI);
@@ -171,8 +177,7 @@ public class CreatorView {
 				textWindow.addListener(new TextInputWindowListener() {
 					@Override
 					public void textAccepted(String text) {
-						controller.saveModelToFileAs(text);
-						popupTab.clear();
+						if(controller.saveModelToFileAs(text)) popupTab.clear();
 					}
 					
 					@Override
@@ -207,7 +212,7 @@ public class CreatorView {
 			}});
 		toggleSelectMode.setFillParent(false);
 		
-		addContinent = new TextButton("Kontinent Manager", skin);
+		addContinent = new TextButton("Continent Manager", skin);
 		addContinent.addListener(new ChangeListener() {
 			public void changed (ChangeEvent event, Actor actor) {
 				popupTab.add(new ContinentMaker(skin));
@@ -234,7 +239,7 @@ public class CreatorView {
 		if(backgroundTex.exists()) templateTex = new Texture("mapMaker/template.png");
 		else {
 			Pixmap pixmap = new Pixmap( 1, 1, Format.RGBA8888 );
-			pixmap.setColor(Color.BLUE);
+			pixmap.setColor(MiscUtils.rgba(190, 190, 190, 1));
 			pixmap.drawPixel(0, 0);
 			templateTex = new Texture(pixmap);
 		}
@@ -256,17 +261,16 @@ public class CreatorView {
 		main.getBatch().end();
 		
 		main.getShRend().setProjectionMatrix(cam.combined);
-		
 		main.getShRend().begin(ShapeType.Filled);
 		
 		if(viewOutline) {
 			for(float[] i: model.getTravel().getDecoLines()) {
-				Utils.drawRoundedLine(main.getShRend(), i, 3.5f, Color.DARK_GRAY);
+				MiscUtils.drawRoundedLine(main.getShRend(), i, 3.5f, Color.DARK_GRAY);
 			}
 		}
 		
 		if(model.getWorkingLineIndex() != -1) {
-			Utils.drawRoundedLine(main.getShRend(), model.getTravel().getDecoLines().get(model.getWorkingLineIndex()), 5, Color.RED);
+			MiscUtils.drawRoundedLine(main.getShRend(), model.getTravel().getDecoLines().get(model.getWorkingLineIndex()), 5, Color.RED);
 		}
 		
 		if(viewCont) {
@@ -275,8 +279,8 @@ public class CreatorView {
 				Color contColor = cont.getColor();
 				
 				for(Country x: model.getTravel().getContMembers().get(i)) {
-					drawElementOutline(x, contColor);
-					drawElementPoly(x, contColor);
+					drawCountryOutline(x, contColor);
+					drawCountryPoly(x, contColor);
 				}
 			}
 			
@@ -290,21 +294,21 @@ public class CreatorView {
 		
 		if(viewPoly) {
 			for(Country i: model.getCountries()) {
-				drawElementPoly(i, Color.RED);
+				drawCountryPoly(i, Color.RED);
 			}
 			
 			for(Country i: model.getSelection()) {
-				drawElementPoly(i, Color.YELLOW);
+				drawCountryPoly(i, Color.YELLOW);
 			}
 		}
 		
 		if(viewOutline) {		
 			for(Country i: model.getCountries()) {
-				drawElementOutline(i, Color.FIREBRICK);
+				drawCountryOutline(i, Color.FIREBRICK);
 			}
 			
 			for(Country i: model.getSelection()) {
-				drawElementOutline(i, Color.GOLD);
+				drawCountryOutline(i, Color.GOLD);
 			}
 		}
 		
@@ -318,7 +322,7 @@ public class CreatorView {
 			
 			for(Country i: model.getSelection()) {
 				for(Country x: travel.getMovMap().get(i.getName())) {
-					Utils.drawRoundedLine(
+					MiscUtils.drawRoundedLine(
 							main.getShRend(), 
 							i.getPolyFull().getPolygon().getCentroid(vecTemp1),
 							x.getPolyFull().getPolygon().getCentroid(vecTemp2), 
@@ -329,8 +333,8 @@ public class CreatorView {
 			}
 		}
 		
-		if(viewPoly) drawElementPoly(model.getWorkingCountry(), Color.GREEN);
-		if(viewOutline) drawElementOutline(model.getWorkingCountry(), Color.FOREST);
+		if(viewPoly) drawCountryPoly(model.getWorkingCountry(), Color.GREEN);
+		if(viewOutline) drawCountryOutline(model.getWorkingCountry(), Color.FOREST);
 		
 		main.getShRend().end();
 		
@@ -353,7 +357,6 @@ public class CreatorView {
 				popupTab.clear();
 				
 				controller.suspendInput(); 
-				System.out.println("suspend: popupTab --> escMenu");
 				
 				backTex = templateTex;
 				
@@ -367,8 +370,6 @@ public class CreatorView {
 		if(escMenu.isVisible()) {
 			escMenu.setVisible(false);
 			
-			System.out.println("resume: escMenu --> goto game");
-			
 			setViewPoly(true);
 			setViewOutline(true);
 			
@@ -377,8 +378,6 @@ public class CreatorView {
 		else {
 			escMenu.setVisible(true);
 			stageUI.setKeyboardFocus(escMenu);
-			
-			System.out.println("suspend: game --> goto escMenu");
 			
 			controller.suspendInput();
 		} 
@@ -423,7 +422,7 @@ public class CreatorView {
 	protected void countryNameRequest(Country country) {
 		controller.suspendInput();
 		
-		TextInputWindow textWindow = new TextInputWindow("Name des Landes", skin, main.getBinds());
+		TextInputWindow textWindow = new TextInputWindow("Country Name", skin, main.getBinds());
 		
 		if(country.getName() != null) {
 			textWindow.setText(country.getName());
@@ -498,9 +497,6 @@ public class CreatorView {
 			@Override
 			public void changed(ChangeEvent event, Actor actor) {
 				
-				System.out.println("hiiiii");
-				System.out.println(list.getSelected());
-				
 				if(list.getSelected() != null) {
 					String contName = list.getSelected();
 					
@@ -528,7 +524,7 @@ public class CreatorView {
 			break;
 			
 		case CrtKeyProfile.SELECT:
-			toggleSelectMode.setLabel(new Label("Mode:  Select Element", skin));
+			toggleSelectMode.setLabel(new Label("Mode:  Select Country", skin));
 			break;
 			
 		case CrtKeyProfile.CONNECTION:
@@ -537,26 +533,26 @@ public class CreatorView {
 	}
 	}
 	
-	private void drawElementPoly(Country element, Color color) {
-		int vertsNumber = element.getVertsList().size();
+	private void drawCountryPoly(Country country, Color color) {
+		int vertsNumber = country.getVertsList().size();
 		
 		switch(vertsNumber) {
 			
 		default:
-			Utils.drawPolygonFilled(main.getShRend(), element.getPolyFull(), color);
+			MiscUtils.drawPolygonFilled(main.getShRend(), country.getPolyFull(), color);
 //			Rectangle rect = element.getPolyFull().getBoundingRect();
 //			Utils.drawDebugRect(main.getShRend(), rect, color);
 			break;
 			
 		case 4:		
-			Utils.drawRoundedLine(
+			MiscUtils.drawRoundedLine(
 					main.getShRend(), 
 					
-					element.getVertsList().get(0), 
-					element.getVertsList().get(1), 
+					country.getVertsList().get(0), 
+					country.getVertsList().get(1), 
 					
-					element.getVertsList().get(2), 
-					element.getVertsList().get(3), 
+					country.getVertsList().get(2), 
+					country.getVertsList().get(3), 
 					
 					2, 
 					color);
@@ -566,8 +562,8 @@ public class CreatorView {
 			main.getShRend().setColor(color);
 			
 			main.getShRend().circle(
-					element.getVertsList().get(0), 
-					element.getVertsList().get(1), 
+					country.getVertsList().get(0), 
+					country.getVertsList().get(1), 
 					
 					1f, 
 					50);
@@ -578,24 +574,24 @@ public class CreatorView {
 		}
 	}
 	
-	private void drawElementOutline(Country element, Color color) {
-		int vertsNumber = element.getVertsList().size();
+	private void drawCountryOutline(Country country, Color color) {
+		int vertsNumber = country.getVertsList().size();
 		
 		switch(vertsNumber) {
 			
 		default:
-			Utils.drawPolygonOutline(main.getShRend(), element.getPolyFull(), 4, color);
+			MiscUtils.drawPolygonOutline(main.getShRend(), country.getPolyFull(), 4, color);
 			break;
 			
 		case 4:		
-			Utils.drawRoundedLine(
+			MiscUtils.drawRoundedLine(
 					main.getShRend(), 
 					
-					element.getVertsList().get(0), 
-					element.getVertsList().get(1), 
+					country.getVertsList().get(0), 
+					country.getVertsList().get(1), 
 					
-					element.getVertsList().get(2), 
-					element.getVertsList().get(3), 
+					country.getVertsList().get(2), 
+					country.getVertsList().get(3), 
 					
 					4, 
 					color);
@@ -605,8 +601,8 @@ public class CreatorView {
 			main.getShRend().setColor(color);
 			
 			main.getShRend().circle(
-					element.getVertsList().get(0), 
-					element.getVertsList().get(1), 
+					country.getVertsList().get(0), 
+					country.getVertsList().get(1), 
 					
 					2, 
 					50);
@@ -632,7 +628,7 @@ public class CreatorView {
 				
 			for(Country x: movMap.get(i.getName())) {
 				
-				Utils.drawRoundedLine(
+				MiscUtils.drawRoundedLine(
 							main.getShRend(), 
 							
 						i.getPolyFull().getPolygon().getCentroid(tempVec1),
@@ -649,6 +645,8 @@ public class CreatorView {
 
 		private KeyBinds binds;
 		
+		private int maxConts;
+		
 		private Continent currCont;
 		
 		private String tempName;
@@ -656,7 +654,7 @@ public class CreatorView {
 		private final int maxBonus = 30;
 		private int tempBonus;
 		
-		private Color tempColor;
+//		private Color tempColor;
 		
 		// Linker Teil des Fensters
 		private VerticalGroup leftSide;
@@ -675,12 +673,12 @@ public class CreatorView {
 		private TextButton plus;
 		private TextButton minus;
 		
-		private Slider red;
-		private Slider green;
-		private Slider blue;
+//		private Slider red;
+//		private Slider green;
+//		private Slider blue;
 		
 		private ContinentMaker(Skin skin) {
-			super("Kontinent", skin);
+			super("Continent Manager", skin);
 			
 			setViewPoly(false);
 			setViewOutline(false);
@@ -690,6 +688,8 @@ public class CreatorView {
 			setFillParent(false);
 			
 			binds = main.getBinds();
+			
+			maxConts = 10;
 			
 			// Linker Teil des Fensters
 			leftSide = new VerticalGroup();
@@ -704,13 +704,13 @@ public class CreatorView {
 					}
 				}});		
 			
-			newCont = new TextButton("Neuer Kontinent", skin);
+			newCont = new TextButton("New Continent", skin);
 			newCont.addListener(new ChangeListener() {
 				public void changed (ChangeEvent event, Actor actor) {
 					newCurrCont();
 			}});
 			
-			deleteCont = new TextButton("Kontinent entfernen", skin);
+			deleteCont = new TextButton("Remove Continent", skin);
 			deleteCont.addListener(new ChangeListener() {
 				public void changed (ChangeEvent event, Actor actor) {
 					deleteCont();
@@ -760,23 +760,23 @@ public class CreatorView {
 					bonus.setText(String.format("%3s", Integer.toString(tempBonus)));
 				}});
 			
-			red = new Slider(0, 255, 1, false, skin);
-			red.addListener(new ChangeListener() {
-				public void changed(ChangeEvent event, Actor actor) {
-					updateRGBdisplay();
-				}});
-			
-			green = new Slider(0, 255, 1, false, skin);
-			green.addListener(new ChangeListener() {
-				public void changed(ChangeEvent event, Actor actor) {
-					updateRGBdisplay();
-				}});
-			
-			blue = new Slider(0, 255, 1, false, skin);
-			blue.addListener(new ChangeListener() {
-				public void changed(ChangeEvent event, Actor actor) {
-					updateRGBdisplay();
-				}});
+//			red = new Slider(0, 255, 1, false, skin);
+//			red.addListener(new ChangeListener() {
+//				public void changed(ChangeEvent event, Actor actor) {
+//					updateRGBdisplay();
+//				}});
+//			
+//			green = new Slider(0, 255, 1, false, skin);
+//			green.addListener(new ChangeListener() {
+//				public void changed(ChangeEvent event, Actor actor) {
+//					updateRGBdisplay();
+//				}});
+//			
+//			blue = new Slider(0, 255, 1, false, skin);
+//			blue.addListener(new ChangeListener() {
+//				public void changed(ChangeEvent event, Actor actor) {
+//					updateRGBdisplay();
+//				}});
 			
 			bonusModule.addActor(plus);
 			bonusModule.addActor(minus);
@@ -784,14 +784,14 @@ public class CreatorView {
 			
 			rightSide.addActor(name);
 			rightSide.addActor(bonusModule);
-			rightSide.addActor(red);
-			rightSide.addActor(green);
-			rightSide.addActor(blue);
+//			rightSide.addActor(red);
+//			rightSide.addActor(green);
+//			rightSide.addActor(blue);
 			
 			add(leftSide);
 			add(rightSide);
 			
-			TextButton saveCont = new TextButton("Kontinent speichern", skin);
+			TextButton saveCont = new TextButton("Save Continent", skin);
 			saveCont.addListener(new ChangeListener() {
 				public void changed(ChangeEvent event, Actor actor) {
 					saveToModel();
@@ -815,12 +815,9 @@ public class CreatorView {
  			for(int i = 0; i <  objArr.length; i++) {
  				contsNameArr[i] = (String)objArr[i];
  			}
- 			System.out.println("===");
- 			System.out.println(selectCont.getItems().size);
+ 			
  			selectCont.clearItems();
- 			System.out.println(selectCont.getItems().size);
 			selectCont.setItems(contsNameArr);
-			System.out.println(selectCont.getItems().size);
 			
 			if(selectCont.getItems().contains(selected, false)) {
 				selectCont.setSelected(selected);
@@ -837,46 +834,42 @@ public class CreatorView {
 			if(nameNew.length() > 18) {
 				name.setText(nameNew.substring(0, 18));
 				
-				System.out.println(name.getText());
-				
 				name.setCursorPosition(Math.min(cursorPos, name.getText().length()));
 				return;
 			}
 			
 			tempName = nameNew;
-			
-			System.out.println(name.getText());
 		}
 		
 		private void updateBonus() {
 			bonus.setText(String.format("%3s", Integer.toString(tempBonus)));
 		}
 		
-		private void updateRGBsliders() {
-			
-			Color storeColor = new Color(tempColor);
-			
-			red.setValue(storeColor.r*255);
-			green.setValue(storeColor.g*255);
-			blue.setValue(storeColor.b*255);
-			
-			updateRGBdisplay();
-		}
+//		private void updateRGBsliders() {
+//			
+//			Color storeColor = new Color(tempColor);
+//			
+//			red.setValue(storeColor.r*255);
+//			green.setValue(storeColor.g*255);
+//			blue.setValue(storeColor.b*255);
+//			
+//			updateRGBdisplay();
+//		}
 		
-		private void updateRGBdisplay() {
-			tempColor = new Color(red.getValue()/255f, green.getValue()/255f, blue.getValue()/255f, 1);
-			
-			Pixmap pixmap = new Pixmap( 1, 1, Format.RGBA8888 );
-			pixmap.setColor(tempColor);
-			pixmap.drawPixel(0, 0);
-			
-			backTex = new Texture(pixmap);
-		}
+//		private void updateRGBdisplay() {
+//			tempColor = new Color(red.getValue()/255f, green.getValue()/255f, blue.getValue()/255f, 1);
+//			
+//			Pixmap pixmap = new Pixmap( 1, 1, Format.RGBA8888 );
+//			pixmap.setColor(tempColor);
+//			pixmap.drawPixel(0, 0);
+//			
+//			backTex = new Texture(pixmap);
+//		}
 		
 		private void updateAll() {
 			updateName();
 			updateBonus();
-			updateRGBsliders();
+//			updateRGBsliders();
 			
 			updateList();
 		}
@@ -902,11 +895,11 @@ public class CreatorView {
 			tempName = new String(cont.getName());
 			name.setText(tempName);
 			tempBonus = cont.getBonus();
-			tempColor = new Color(cont.getColor());
+//			tempColor = new Color(cont.getColor());
 			
 			updateName();
 			updateBonus();
-			updateRGBsliders();
+//			updateRGBsliders();
 		}
 		
 		private void newCurrCont() {
@@ -917,6 +910,8 @@ public class CreatorView {
 		
 		private boolean saveToModel() {
 			
+			if(model.getAvailableContColor() == null) return false;
+			
 			if(model.getContinents().containsValue(currCont)) {
 				HashMap<String, Continent> tempContArr = new HashMap<String, Continent>(model.getContinents());
 				tempContArr.remove(currCont.getName(), currCont);
@@ -925,26 +920,28 @@ public class CreatorView {
 					return false;
 				}
 				
-				updateRGBdisplay();
+//				updateRGBdisplay();
 				
 				model.renameCont(currCont, tempName);
 				currCont.setBonus(tempBonus);
-				currCont.setColor(tempColor);
+				currCont.setColor(model.getAvailableContColor());
 				
 				updateList();
 				
 				return true;
+			} else {
+				if(model.getContinents().size() >= maxConts) return false;
 			}
 			
 			if(dupeName(model.getContinents(), tempName)) {
 				return false;
 			}	
 			
-			updateRGBdisplay();
+//			updateRGBdisplay();
 			
 			currCont.setName(tempName);
 			currCont.setBonus(tempBonus);
-			currCont.setColor(tempColor);
+			currCont.setColor(model.getAvailableContColor());
 			
 			model.addContinent(currCont);
 			

@@ -13,9 +13,9 @@ import com.badlogic.gdx.utils.ScreenUtils;
 
 import io.Risiko.KeyBinds;
 import io.Risiko.Main;
-import io.Risiko.Interfaces.Controller;
-import io.Risiko.Interfaces.KeyProfile;
-import io.Risiko.Utils.Utils;
+import io.Risiko.Utils.Controller;
+import io.Risiko.Utils.KeyProfile;
+import io.Risiko.Utils.MiscUtils;
 
 public class CreatorController implements Controller {
 	
@@ -102,12 +102,10 @@ public class CreatorController implements Controller {
 	}
 	
 	public void resumeInput() {
-		System.out.println("called");
 		switch(profileEnum) {
 			default:
 				profile = new Edit();
 				profileEnum = CrtKeyProfile.EDIT;
-				System.out.println("called default");
 				break;
 				
 			case CrtKeyProfile.EDIT:
@@ -195,27 +193,40 @@ public class CreatorController implements Controller {
 			
 			view.toggleMenus();
 			view.toggleMenus();
+			
+			return true;
 		}catch (Exception e) {
 			System.out.println("Error when saving to existing file");
 		}
-		return true;
+		
+		return false;
 	}
 	
 	public boolean saveModelToFileAs(String filename) {
+		
+		String fullFilename = filename + ".json";
+		
+		FileHandle dir = Gdx.files.local("MapMaker/");
+		FileHandle[] dirFiles = dir.list();
+		for(FileHandle i: dirFiles) {
+			if(fullFilename.equals(i.name())) {
+				return false;
+			}
+		}
+		
 		Json json = new Json();
-		FileHandle file = Gdx.files.local("MapMaker/"+filename + ".json");
+		FileHandle file = Gdx.files.local("MapMaker/" + fullFilename);
 		
 		try {
 			file.writeString(json.prettyPrint(model.saveModel()), false);
 			
-			System.out.println("Saved to: " + file.path());
-			
 			view.toggleMenus();
 			view.toggleMenus();
+			return true;
 		}catch (Exception e) {
 			System.out.println("Error when saving to new File");
+			return false;
 		}
-		return true;
 	}
 
 	public boolean loadModel(FileHandle file) {
@@ -260,9 +271,7 @@ public class CreatorController implements Controller {
 	
 	protected void receiveCountryName(String name, Country country) {
 		
-		if(name == null) {
-			System.out.println("name is null");
-			
+		if(name == null) {	
 			model.setWorkingCountry(new Country());
 			return;
 		}
@@ -303,7 +312,7 @@ public class CreatorController implements Controller {
 	
 	// Default Verhalten für manche Sachen
 	
-	public void defDuringPressed(ArrayList<Integer> keyInputs, ArrayList<Integer> buttonInputs) {
+	private void defDuringPressed(ArrayList<Integer> keyInputs, ArrayList<Integer> buttonInputs) {
 		
 		if(keyInputs.contains(binds.UP)) {
 			cam.position.y += 2;
@@ -420,7 +429,7 @@ public class CreatorController implements Controller {
 				}
 			}
 			
-			if(keycode == binds.OUTLINES) {
+			if(keycode == binds.FUNC1 || keycode == binds.FUNC2) {
 				view.toggleViewCont();
 			}
 			
@@ -443,7 +452,7 @@ public class CreatorController implements Controller {
 		public void buttonPressed(int buttoncode) {
 
 			mouseDown = main.getMouseDown();
-			mouseDown = Utils.vec2unproject(cam, mouseDown);
+			mouseDown = MiscUtils.vec2unproject(cam, mouseDown);
 		
 			
 			if(buttoncode == Input.Buttons.LEFT) {
@@ -485,11 +494,11 @@ public class CreatorController implements Controller {
 		@Override
 		public void keyPressed(int keycode) {
 			
-			if(keycode == binds.SHOW_POLY) {
+			if(keycode == binds.FUNC1) {
 				view.toggleViewPoly();
 			}
 			
-			if(keycode == binds.OUTLINES) {
+			if(keycode == binds.FUNC2) {
 				view.toggleViewOutline();
 			}
 			
@@ -515,7 +524,7 @@ public class CreatorController implements Controller {
 		public void buttonPressed(int buttoncode) {
 			
 			mouseDown = main.getMouseDown();
-			mouseDown = Utils.vec2unproject(cam, mouseDown);
+			mouseDown = MiscUtils.vec2unproject(cam, mouseDown);
 			
 			if(main.isKeyInputActive(binds.SHIFT)) {
 				if(buttoncode == Input.Buttons.LEFT) {
@@ -616,10 +625,11 @@ public class CreatorController implements Controller {
 			ArrayList<Country> selection = model.getSelection();
 			
 			mouseDown = main.getMouseDown();
-			mouseDown = Utils.vec2unproject(cam, mouseDown);
+			mouseDown = MiscUtils.vec2unproject(cam, mouseDown);
 			
 			if(!main.isKeyInputActive(binds.SHIFT)) {
 				if(buttoncode == Input.Buttons.LEFT) {
+					model.setWorkingLineIndex(-1);
 					for(Country i: model.getCountries()) {
 						if(i.isDrawReady() && i.getPolyFull().getPolygon().contains(mouseDown)) {
 							if(selection.contains(i)) {
@@ -647,7 +657,7 @@ public class CreatorController implements Controller {
 		public void buttonDepressed(int buttoncode) {
 			
 			if(mouseDownPerm != null && buttoncode == Input.Buttons.LEFT) {
-				Vector2 mouseUp = Utils.vec2unproject(cam, new Vector2(Gdx.input.getX(), Gdx.input.getY()));;
+				Vector2 mouseUp = MiscUtils.vec2unproject(cam, new Vector2(Gdx.input.getX(), Gdx.input.getY()));;
 				
 				model.addLine(mouseDownPerm, mouseUp);
 				mouseDownPerm = null;

@@ -9,6 +9,8 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
+import io.Risiko.Utils.MiscUtils;
+
 public class GenManager {
 	
 	private Country workingCountry;
@@ -18,6 +20,7 @@ public class GenManager {
 	private TravelNetwork travel;
 	
 	private ArrayList<Country> selection;
+	private ArrayList<Color> availableContColors;
 
 	protected GenManager() {
 		travel = new TravelNetwork();
@@ -26,6 +29,8 @@ public class GenManager {
 		workingCountry = workingElementIn;
 		
 		selection = new ArrayList<Country>();
+		
+		availableContColors = MiscUtils.makeContColors();
 		
 		workingLineIndex = -1;
 	}
@@ -141,8 +146,17 @@ public class GenManager {
 		return selection;
 	}
 	
-	public void setSelection(ArrayList<Country> selectioIn) {
-		selection = selectioIn;
+	public void setSelection(ArrayList<Country> selectionIn) {
+		selection = selectionIn;
+	}
+	
+	public Color getAvailableContColor() {
+		for(Continent i: travel.getStrToCont().values()) {
+			availableContColors.remove(i.getColor());
+		}
+		
+		if(!availableContColors.isEmpty()) return availableContColors.get(0);
+		return null;
 	}
 	
 	public TravelNetworkSave saveModel() {

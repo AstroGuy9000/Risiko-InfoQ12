@@ -64,8 +64,6 @@ www-test/
 *.iml
 
 ## Eclipse:
-.classpath
-.project
 .metadata/
 /android/bin/
 /core/bin/
@@ -82,7 +80,6 @@ www-test/
 *.bak
 *.swp
 *~.nib
-.settings/
 .loadpath
 .externalToolBuilders/
 *.launch
