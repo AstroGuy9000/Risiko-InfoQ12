@@ -107,9 +107,9 @@ public class GameplayModel extends TravelNetwork {
 		}
 		
 		if(31 <= getStrToCountry().values().size()) {
-			cardBank.add(new Card(cardBank));
+			new Card(cardBank);
 		}
-		cardBank.add(new Card(cardBank));
+		new Card(cardBank);
 		
 		cardLevel = 0;
 		
@@ -540,7 +540,7 @@ public class GameplayModel extends TravelNetwork {
 
 		@Override
 		protected void nextPhase() {
-			if(toSpendTroops <= 0) {
+			if(toSpendTroops <= 0 && owner.getDeck().size() <= 6) {
 				setGamePhase(new AttackPhase(SetupPhase.this));
 			}
 		}
@@ -606,11 +606,26 @@ public class GameplayModel extends TravelNetwork {
 					Card pulledCard = pullCard();
 					if(pulledCard != null) start.getOccupant().addCard(pulledCard);
 					
+					Player prevOwnerTemp = target.getOccupant();
+					ArrayList<Country> prevOwnerCountriesTemp = new ArrayList<Country>(prevOwnerTemp.getCountries());
+					prevOwnerCountriesTemp.remove(target);
+					
+					HashSet<Card> stolenCardsIn = new HashSet<Card>();
+					if(prevOwnerCountriesTemp.isEmpty()) {
+						for(Card i : prevOwnerTemp.getDeck()) {
+							start.getOccupant().addCard(i);
+							prevOwnerTemp.removeCard(i);
+							stolenCardsIn.add(i);
+						}
+					}
+					
 					conquered = new GameAction() {
 
 						private int troopsToCountry = troops-lossAttack;
 						private String previousOwnerName = target.getOccupant().getName();
 						private Card pulledCardAction = pulledCard;
+						
+						HashSet<Card> stolenCards = new HashSet<Card>(stolenCardsIn);
 						
 						public boolean undoAction() {
 							
@@ -631,13 +646,21 @@ public class GameplayModel extends TravelNetwork {
 							target.setTroops(lossDefend);
 							start.addTroops(lossAttack+1);
 							removeAction(AttackCountry.this);
+							
+							for(Card i : stolenCards) {
+								start.getOccupant().addCard(i);
+								previousOwner.removeCard(i);
+							}
+							
 							return true;
 						}
 						
 					};
 					target.setOccupant(start.getOccupant());
+					
 					target.setTroops(1);
 					start.addTroops(-1);
+					
 					selection.clear();
 				}
 				

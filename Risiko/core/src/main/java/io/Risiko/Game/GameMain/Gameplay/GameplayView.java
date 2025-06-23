@@ -171,6 +171,8 @@ public class GameplayView {
 					SetupPhase phaseTemp2 = (SetupPhase) model.getPhaseObject();
 					int troopsTemp2 = phaseTemp2.getToSpendTroops();
 					turnInfo.add(new Label("Troops: " + Integer.toString(troopsTemp2), skin));
+					turnInfo.row();
+					if(model.getTurnOwner().getDeck().size() > 6) turnInfo.add(new Label("Too many cards", skin));
 					break;
 					
 				case Phase_Type.ATTACK:
@@ -287,6 +289,8 @@ public class GameplayView {
 		
 			HashMap<String, Card> strToCard = new HashMap<String, Card>();
 		
+			int jokerCounter = 0;
+			
 			for(Card i: model.getTurnOwner().getDeck()) {
 				String cardName = new String();
 			
@@ -308,7 +312,8 @@ public class GameplayView {
 					break;
 				
 				case Card_Type.Joker:
-					cardName = "Joker     |   ";
+					cardName = "Joker     | " + jokerCounter;
+					jokerCounter++;
 					break;
 				}
 				
