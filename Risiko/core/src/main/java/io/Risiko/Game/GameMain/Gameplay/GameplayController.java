@@ -251,11 +251,11 @@ public class GameplayController implements Controller{
 					model.undoAction();
 				}
 				
-				if(keycode == binds.CYCLE) {
-					for(Country i: model.getStrToCountry().values()) {
-						i.setOccupant(model.getTurnOwner());
-					}
-				}
+//				if(keycode == binds.CYCLE) {
+//					for(Country i: model.getStrToCountry().values()) {
+//						i.setOccupant(model.getTurnOwner());
+//					}
+//				}
 			} else {
 				if(keycode == binds.ACCEPT) {
 					view.requestNumberForAction();
