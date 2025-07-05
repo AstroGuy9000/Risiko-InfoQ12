@@ -251,11 +251,11 @@ public class GameplayModel extends TravelNetwork {
 		
 		cardTypesTemp.remove(card1.getCardType());
 		
-		if(cardTypesTemp.contains(card2.getCardType())) {
+		if(cardTypesTemp.contains(card2.getCardType()) || card2.getCardType() == Card_Type.Joker) {
 			
 			cardTypesTemp.remove(card2.getCardType());
 			
-			if(cardTypesTemp.contains(card3.getCardType())) {
+			if(cardTypesTemp.contains(card3.getCardType()) || card3.getCardType() == Card_Type.Joker) {
 				return true;
 			}
 		}
