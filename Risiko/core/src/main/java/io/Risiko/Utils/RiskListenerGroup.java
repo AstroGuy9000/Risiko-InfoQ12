@@ -2,7 +2,7 @@ package io.Risiko.Utils;
 
 import java.util.ArrayList;
 
-public class RiskListenerGroup {
+public class RiskListenerGroup extends RiskListener {
 
 	ArrayList<RiskListener> listeners;
 	
